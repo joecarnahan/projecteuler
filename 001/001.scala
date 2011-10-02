@@ -11,9 +11,9 @@ object _001 {
       if (curr < limit)
           sumOfMultiplesLessThanRec(curr + 1, 
                                     if (isMultipleOf(curr, multiplesOf))
-                                      acc
+                                      acc + curr
                                     else
-                                      acc + curr)
+                                      acc)
       else
         acc
 
