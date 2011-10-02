@@ -5,6 +5,8 @@
  */
 object Naive {
 
+  def isEven(toTest: Int) = ((toTest % 2) == 0)
+
   def computeValuesUpTo(limit: Int): Int = {
 
     def computeValues(curr: Int, prev: Int, sum: Int): Int =
@@ -12,7 +14,7 @@ object Naive {
         sum
       else
         computeValues(curr + prev, curr,
-                      if ((curr % 2) == 0) sum + curr else sum)
+                      if (isEven(curr)) sum + curr else sum)
                         
 
     computeValues(1, 0, 0)
