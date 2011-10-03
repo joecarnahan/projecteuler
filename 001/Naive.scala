@@ -12,14 +12,14 @@
  */
 object Naive {
 
-  def isMultipleOf(x: Int, multipleOf: Int): Boolean = ((x % multipleOf) == 0)
+  def isMultipleOf(x: Long, multipleOf: Long): Boolean = ((x % multipleOf) == 0)
 
-  def isMultipleOf(x: Int, multiplesOf: Seq[Int]): Boolean =
-    multiplesOf.exists((y: Int) => ((x % y) == 0))
+  def isMultipleOf(x: Long, multiplesOf: Seq[Long]): Boolean =
+    multiplesOf.exists((y: Long) => ((x % y) == 0))
 
-  def sumOfMultiplesLessThan(limit: Int, multiplesOf: Seq[Int]): Int = {
+  def sumOfMultiplesLessThan(limit: Long, multiplesOf: Seq[Long]): Long = {
 
-    def sumOfMultiplesLessThanRec(curr: Int, acc: Int): Int = 
+    def sumOfMultiplesLessThanRec(curr: Long, acc: Long): Long = 
       if (curr < limit)
           sumOfMultiplesLessThanRec(curr + 1, 
                                     if (isMultipleOf(curr, multiplesOf))
@@ -33,17 +33,16 @@ object Naive {
   }
 
   def main(args: Array[String]) = {
-    val defaultLimit = 1000
-    val tries = 10
+    val multiplesOf = List(3L, 5L)
     if (args.length == 1) {
-      val limit = Integer.valueOf(args(0))
+      val limit = java.lang.Long.parseLong(args(0))
       println("Naive algorithm took an average of " +
               Timer.timeInMilliseconds(() => 
-                sumOfMultiplesLessThan(limit, List(3,5)), tries) +
-              " milliseconds over " + tries + " attempts.")
+                sumOfMultiplesLessThan(limit, multiplesOf)) +
+              " milliseconds.")
     }
     else
-      println(sumOfMultiplesLessThan(defaultLimit, List(3, 5)))
+      println(sumOfMultiplesLessThan(1000L, multiplesOf))
   }
 
 }

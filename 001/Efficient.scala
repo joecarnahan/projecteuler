@@ -18,28 +18,26 @@
  */
 object Efficient {
 
-  def sumOfMultiplesLessThan(limit: Int, multipleOf: Int): Int = {
+  def sumOfMultiplesLessThan(limit: Long, multipleOf: Long): Long = {
     val p = (limit - 1) / multipleOf
     multipleOf * p * (p + 1) / 2
   }
 
-  def sumOfMultiplesOf3And5LessThan(limit: Int): Int =
+  def sumOfMultiplesOf3And5LessThan(limit: Long): Long =
     sumOfMultiplesLessThan(limit, 3) + 
     sumOfMultiplesLessThan(limit, 5) -
     sumOfMultiplesLessThan(limit, 15)
 
   def main(args: Array[String]) = {
-    val defaultLimit = 1000
-    val tries = 10
     if (args.length == 1) {
-      val limit = Integer.valueOf(args(0))
+      val limit = java.lang.Long.parseLong(args(0))
       println("Efficient algorithm took an average of " +
               Timer.timeInMilliseconds(() => 
-                sumOfMultiplesOf3And5LessThan(limit), tries) +
-              " milliseconds over " + tries + " attempts.")
+                sumOfMultiplesOf3And5LessThan(limit)) +
+              " milliseconds.")
     }
     else
-      println(sumOfMultiplesOf3And5LessThan(defaultLimit))
+      println(sumOfMultiplesOf3And5LessThan(1000L))
   }
 
 }

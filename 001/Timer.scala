@@ -5,7 +5,9 @@
  */
 object Timer {
 
-  def timeInMilliseconds(codeToRun: () => Unit, tries: Int): Double = {
+  val tries = 10
+
+  def timeInMilliseconds(codeToRun: () => Unit): Double = {
 
     def time(index: Int, sum: Long): Double =
       if (index == tries)
