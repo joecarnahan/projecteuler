@@ -8,32 +8,28 @@ object Naive {
   val defaultComposite = 600851475143L
 
   /**
-   * Finds all prime numbers lower than or equal to the given limit.
+   * Finds all prime numbers lower than or equal to the given limit, sorted
+   * from smallest to largest.
    *
    * @param limit
    *          the largest number that might be returned by this method.
    * @return All of the prime numbers lower than or equal to the given limit
    */
-  def sieveOfErasthones(limit: Long) = {
+  def sieveOfErasthones(limit: Long): List[Long] = {
 
-    val squareRoot = scala.math.sqrt(limit).toLong
+    def from(value: Long): Stream[Long] =
+      Stream.cons(value, from(value + 1))
 
-    def runSieve(primes: List[Long], remaining: Seq[Long]): List[Long] =
-      if (remaining.isEmpty)
-        primes
-      else if (remaining.head >= squareRoot)
-        primes ++ remaining
-      else
-        runSieve(remaining.head :: primes, 
-                 remaining.tail.filterNot((x: Long) => 
-                                          ((x % remaining.head) == 0)))
+    def sieve(stream: Stream[Long]): Stream[Long] =
+      Stream.cons(stream.head, 
+                  sieve(stream.tail.filter((x: Long) => 
+                                           (x % stream.head) != 0 )))
 
-    runSieve(List[Long](), 2L to limit)
+    sieve(from(2)).takeWhile(_ <= limit).toList
   }
 
   def findLargestPrimeFactor(composite: Long): Long = {
-    val primes = 
-      sieveOfErasthones(composite / 2).sorted(scala.math.Ordering.Long.reverse)
+    val primes = sieveOfErasthones(composite / 2).reverse
     primes.find((x: Long) => 
       ((composite % x) == 0)).getOrElse(sys.error("Given value " + composite + 
                                                   " is not a composite number"))
@@ -54,3 +50,4 @@ object Naive {
       runOn(defaultComposite)
 
 }
+
