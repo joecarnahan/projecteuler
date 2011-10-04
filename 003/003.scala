@@ -25,19 +25,24 @@ object _003 {
     sieve(from(2))
   }
 
-  def findLargestPrimeFactor(toFactor: Long, primes: Stream[Long]): Long = 
-    if (primes.head >= toFactor)
-      toFactor
-    else if ((toFactor % primes.head) == 0)
-      findLargestPrimeFactor(toFactor / primes.head, sieveOfErasthones)
-    else
-      findLargestPrimeFactor(toFactor, primes.tail)
+  def findLargestPrimeFactor(toFactor: Long): Long = {
+
+    def findLargestPrimeFactor(current: Long, primes: Stream[Long]): Long =
+      if (primes.head > scala.math.sqrt(current).toLong)
+        current
+      else if ((current % primes.head) == 0)
+        findLargestPrimeFactor(current / primes.head, sieveOfErasthones)
+      else
+        findLargestPrimeFactor(current, primes.tail)
+
+    findLargestPrimeFactor(toFactor, sieveOfErasthones)
+  }
 
   def runOn(composite: Long) = {
-    println(findLargestPrimeFactor(composite, sieveOfErasthones))
-    println("Naive algorithm took an average of " + 
+    println(findLargestPrimeFactor(composite))
+    println("This algorithm took an average of " + 
             Timer.timeInMilliseconds(() =>
-              findLargestPrimeFactor(composite, sieveOfErasthones)) +
+              findLargestPrimeFactor(composite)) +
             "ms.")
   }
 
