@@ -3,7 +3,7 @@
  * 
  * @author Joe Carnahan (joseph.carnahan@gmail.com)
  */
-object Naive {
+object _003 {
 
   val defaultComposite = 600851475143L
 
