@@ -1,9 +1,12 @@
 /**
- * My solution to problem 4 of Project Euler.
+ * My initial solution to problem 4 of Project Euler.
+ *
+ * This just checks every product of numbers between 1 and 999 inclusive
+ * to see if it's a palindrome and keeps the largest one.
  *
  * @author Joe Carnahan (joseph.carnahan@gmail.com)
  */
-object _004 {
+object _004_Naive {
 
   val defaultLimit = 1000
 
@@ -15,39 +18,24 @@ object _004 {
     else
       false
 
-  // def isPalindrome(toCheck: Long): Boolean = isPalindrome(toCheck.toString)
-  // debug
-  def isPalindrome(toCheck: Long): Boolean = {
-    val s = toCheck.toString
-    if (isPalindrome(s)) {
-      println(s + " is a palindrome")
-      true
-    }
-    else {
-      println(s + " is not a palindrome")
-      false
-    }
-  }
-  // enddebug
+  def isPalindrome(toCheck: Long): Boolean = isPalindrome(toCheck.toString)
 
   def findLargestPalindromeProductOfNumbersLessThan(limit: Long) = {
-    
-    def search(a: Long, b: Long): Long =
-      // debug
-      {
-        println("Trying " + a.toString + " and " + b.toString)
-      // enddebug
-      if (isPalindrome(a * b))
-        a * b
-      else if (a == b)
-        search(a - 1, limit - 1)
-      else
-        search(a, b - 1)
-      // debug
-      }
-      // enddebug
 
-    search(limit - 1, limit - 1)
+    def search(a: Long, b: Long, largest: Long): Long =
+      if (a == limit)
+        largest
+      else if (b == limit)
+        search(a + 1, a + 1, largest)
+      else {
+        val product = a * b
+        if (isPalindrome(product) && (product > largest))
+          search(a, b + 1, product)
+        else
+          search(a, b + 1, largest)
+      }
+
+    search(1, 1, 1)
   }
 
   def runOn(limit: Long) = {
