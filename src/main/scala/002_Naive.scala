@@ -9,7 +9,7 @@
  *
  * @author Joe Carnahan (joseph.carnahan@gmail.com)
  */
-object Naive {
+object _002_Naive {
 
   def isEven(toTest: Long) = ((toTest % 2) == 0)
 
@@ -28,10 +28,10 @@ object Naive {
 
   def main(args: Array[String]) = 
     if (args.length == 1)
-      println("Naive algorithm required an average of " + 
+      println("Naive solution to problem 2 took " +
               Timer.timeInMilliseconds(() =>
                 computeValuesUpTo(java.lang.Long.parseLong(args(0)))) +
-              " milliseconds.")
+              "ms.")
     else
       println(computeValuesUpTo(4000000L))
 

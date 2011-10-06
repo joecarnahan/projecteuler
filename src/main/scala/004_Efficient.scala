@@ -74,7 +74,7 @@ object _004_Efficient {
 
   def runOn(limit: Long) = {
     println(findLargestPalindromeProductOfNumbersLessThan(limit))
-    println("Efficient algorithm took an average of " + 
+    println("Efficient solution to problem 4 took " +
             Timer.timeInMilliseconds(() =>
               findLargestPalindromeProductOfNumbersLessThan(limit)) +
             "ms.")

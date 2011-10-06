@@ -10,7 +10,7 @@
  *
  * @author Joe Carnahan (joseph.carnahan@gmail.com)
  */
-object Naive {
+object _001_Naive {
 
   def isMultipleOf(x: Long, multipleOf: Long): Boolean = ((x % multipleOf) == 0)
 
@@ -36,10 +36,10 @@ object Naive {
     val multiplesOf = List(3L, 5L)
     if (args.length == 1) {
       val limit = java.lang.Long.parseLong(args(0))
-      println("Naive algorithm took an average of " +
+      println("Naive solution to problem 1 took " +
               Timer.timeInMilliseconds(() => 
                 sumOfMultiplesLessThan(limit, multiplesOf)) +
-              " milliseconds.")
+              "ms.")
     }
     else
       println(sumOfMultiplesLessThan(1000L, multiplesOf))

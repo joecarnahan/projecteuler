@@ -14,7 +14,7 @@
  *
  * @author Joe Carnahan (joseph.carnahan@gmail.com)
  */
-object Efficient {
+object _002_Efficient {
 
   def computeValuesUpTo(limit: Long): Long = {
 
@@ -34,10 +34,10 @@ object Efficient {
 
   def main(args: Array[String]) = 
     if (args.length == 1)
-      println("Efficient algorithm required an average of " + 
+      println("Efficient solution to problem 2 took " +
               Timer.timeInMilliseconds(() =>
                 computeValuesUpTo(java.lang.Long.parseLong(args(0)))) +
-              " milliseconds.")
+              "ms.")
     else
       println(computeValuesUpTo(4000000L))
 

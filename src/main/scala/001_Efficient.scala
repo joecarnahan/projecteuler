@@ -16,7 +16,7 @@
  *
  * @author Joe Carnahan (joseph.carnahan@gmail.com).
  */
-object Efficient {
+object _001_Efficient {
 
   def sumOfMultiplesLessThan(limit: Long, multipleOf: Long): Long = {
     val p = (limit - 1) / multipleOf
@@ -31,10 +31,10 @@ object Efficient {
   def main(args: Array[String]) = {
     if (args.length == 1) {
       val limit = java.lang.Long.parseLong(args(0))
-      println("Efficient algorithm took an average of " +
+      println("Efficient solution to problem 1 took " +
               Timer.timeInMilliseconds(() => 
                 sumOfMultiplesOf3And5LessThan(limit)) +
-              " milliseconds.")
+              "ms.")
     }
     else
       println(sumOfMultiplesOf3And5LessThan(1000L))

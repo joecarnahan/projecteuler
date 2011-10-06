@@ -40,7 +40,7 @@ object _003 {
 
   def runOn(composite: Long) = {
     println(findLargestPrimeFactor(composite))
-    println("This algorithm took an average of " + 
+    println("Solution to problem 3 took " +
             Timer.timeInMilliseconds(() =>
               findLargestPrimeFactor(composite)) +
             "ms.")

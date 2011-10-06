@@ -40,7 +40,7 @@ object _004_Naive {
 
   def runOn(limit: Long) = {
     println(findLargestPalindromeProductOfNumbersLessThan(limit))
-    println("Naive algorithm took an average of " + 
+    println("Naive solution to problem 4 took " +
             Timer.timeInMilliseconds(() =>
               findLargestPalindromeProductOfNumbersLessThan(limit)) +
             "ms.")

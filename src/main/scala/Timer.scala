@@ -5,7 +5,7 @@
  */
 object Timer {
 
-  val tries = 10
+  val tries = 20
 
   def timeInMilliseconds(codeToRun: () => Unit): Double = {
 
