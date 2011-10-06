@@ -29,13 +29,8 @@ object _002_Naive {
   val defaultLimit = 4000000L
 
   def main(args: Array[String]) = 
-    if (args.length == 1)
-      Runner.printAndTime(() => 
-        computeValuesUpTo(java.lang.Long.parseLong(args(0))).toString,
-        "Naive solution to problem 2")
-    else
-      Runner.printAndTime(() => 
-        computeValuesUpTo(defaultLimit).toString,
-        "Naive solution to problem 2")
+    Runner.run(args, defaultLimit,
+               computeValuesUpTo(_).toString,
+               "Naive solution to problem 2")
 
 }

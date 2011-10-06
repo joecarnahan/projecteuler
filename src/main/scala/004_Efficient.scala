@@ -73,13 +73,8 @@ object _004_Efficient {
   val defaultLimit = 1000
 
   def main(args: Array[String]) =
-    if (args.length == 1)
-      Runner.printAndTime(() => 
-        findLargestPalindromeProductOfNumbersLessThan(java.lang.Long.parseLong(args(0))).toString,
-        "Efficient solution to problem 4")
-    else
-      Runner.printAndTime(() => 
-        findLargestPalindromeProductOfNumbersLessThan(defaultLimit).toString,
-        "Efficient solution to problem 4")
+    Runner.run(args, defaultLimit,
+               findLargestPalindromeProductOfNumbersLessThan(_).toString,
+               "Efficient solution to problem 4")
 
 }

@@ -35,13 +35,8 @@ object _002_Efficient {
   val defaultLimit = 4000000L
 
   def main(args: Array[String]) = 
-    if (args.length == 1)
-      Runner.printAndTime(() => 
-        computeValuesUpTo(java.lang.Long.parseLong(args(0))).toString,
-        "Efficient solution to problem 2")
-    else
-      Runner.printAndTime(() => 
-        computeValuesUpTo(defaultLimit).toString,
-        "Efficient solution to problem 2")
+    Runner.run(args, defaultLimit,
+               computeValuesUpTo(_).toString,
+               "Efficient solution to problem 2")
 
 }

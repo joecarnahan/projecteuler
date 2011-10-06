@@ -36,15 +36,9 @@ object _001_Naive {
 
   def main(args: Array[String]) = {
     val multiplesOf = List(3L, 5L)
-    if (args.length == 1)
-      Runner.printAndTime(() => 
-        sumOfMultiplesLessThan(java.lang.Long.parseLong(args(0)),
-                               multiplesOf).toString,
-        "Naive solution to problem 1")
-    else
-      Runner.printAndTime(() => 
-        sumOfMultiplesLessThan(defaultLimit, multiplesOf).toString,
-        "Naive solution to problem 1")
+    Runner.run(args, defaultLimit,
+               sumOfMultiplesLessThan(_, multiplesOf).toString,
+               "Naive solution to problem 1")
   }
 
 }

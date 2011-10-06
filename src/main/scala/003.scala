@@ -39,14 +39,9 @@ object _003 {
   val defaultComposite = 600851475143L
 
   def main(args: Array[String]) =
-    if (args.length == 1)
-      Runner.printAndTime(() => 
-        findLargestPrimeFactor(java.lang.Long.parseLong(args(0))).toString,
-        "Solution to problem 3")
-    else
-      Runner.printAndTime(() => 
-        findLargestPrimeFactor(defaultComposite).toString,
-        "Solution to problem 3")
+    Runner.run(args, defaultComposite,
+               findLargestPrimeFactor(_).toString,
+               "Solution to problem 3")
 
 }
 
