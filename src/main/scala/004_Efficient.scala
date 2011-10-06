@@ -1,11 +1,8 @@
 /**
  * A more efficient solution to problem 4 of Project Euler.
  *
- * This solution takes advantage of the insight that palindromes are
- * products of 11.  This solution also interrupts each iteration so
- * that it stops checking once it's certain that a given pair of 
- * numbers is small enough that it can't possibly have a product bigger
- * than the current largest palindrome.
+ * This solution takes advantage of the insight that large 
+ * palindromes are products of 11.
  *
  * @author Joe Carnahan (joseph.carnahan@gmail.com)
  */
