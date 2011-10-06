@@ -32,17 +32,19 @@ object _001_Naive {
     sumOfMultiplesLessThanRec(0, 0)
   }
 
+  val defaultLimit = 1000L
+
   def main(args: Array[String]) = {
     val multiplesOf = List(3L, 5L)
-    if (args.length == 1) {
-      val limit = java.lang.Long.parseLong(args(0))
-      println("Naive solution to problem 1 took " +
-              Timer.timeInMilliseconds(() => 
-                sumOfMultiplesLessThan(limit, multiplesOf)) +
-              "ms.")
-    }
+    if (args.length == 1)
+      Runner.printAndTime(() => 
+        sumOfMultiplesLessThan(java.lang.Long.parseLong(args(0)),
+                               multiplesOf).toString,
+        "Naive solution to problem 1")
     else
-      println(sumOfMultiplesLessThan(1000L, multiplesOf))
+      Runner.printAndTime(() => 
+        sumOfMultiplesLessThan(defaultLimit, multiplesOf).toString,
+        "Naive solution to problem 1")
   }
 
 }

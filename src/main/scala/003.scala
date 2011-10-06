@@ -5,8 +5,6 @@
  */
 object _003 {
 
-  val defaultComposite = 600851475143L
-
   /**
    * Builds a stream of prime numbers.
    *
@@ -38,19 +36,17 @@ object _003 {
     findLargestPrimeFactor(toFactor, sieveOfErasthones)
   }
 
-  def runOn(composite: Long) = {
-    println(findLargestPrimeFactor(composite))
-    println("Solution to problem 3 took " +
-            Timer.timeInMilliseconds(() =>
-              findLargestPrimeFactor(composite)) +
-            "ms.")
-  }
+  val defaultComposite = 600851475143L
 
   def main(args: Array[String]) =
     if (args.length == 1)
-      runOn(java.lang.Long.parseLong(args(0)))
+      Runner.printAndTime(() => 
+        findLargestPrimeFactor(java.lang.Long.parseLong(args(0))).toString,
+        "Solution to problem 3")
     else
-      runOn(defaultComposite)
+      Runner.printAndTime(() => 
+        findLargestPrimeFactor(defaultComposite).toString,
+        "Solution to problem 3")
 
 }
 

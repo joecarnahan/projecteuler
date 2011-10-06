@@ -28,16 +28,16 @@ object _001_Efficient {
     sumOfMultiplesLessThan(limit, 5) -
     sumOfMultiplesLessThan(limit, 15)
 
-  def main(args: Array[String]) = {
-    if (args.length == 1) {
-      val limit = java.lang.Long.parseLong(args(0))
-      println("Efficient solution to problem 1 took " +
-              Timer.timeInMilliseconds(() => 
-                sumOfMultiplesOf3And5LessThan(limit)) +
-              "ms.")
-    }
+  val defaultLimit = 1000L
+
+  def main(args: Array[String]) =
+    if (args.length == 1)
+      Runner.printAndTime(() => 
+        sumOfMultiplesOf3And5LessThan(java.lang.Long.parseLong(args(0))).toString,
+        "Efficient solution to problem 1")
     else
-      println(sumOfMultiplesOf3And5LessThan(1000L))
-  }
+      Runner.printAndTime(() => 
+        sumOfMultiplesOf3And5LessThan(defaultLimit).toString,
+        "Efficient solution to problem 1")
 
 }

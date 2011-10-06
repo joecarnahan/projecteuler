@@ -8,8 +8,6 @@
  */
 object _004_Naive {
 
-  val defaultLimit = 1000
-
   def isPalindrome(toCheck: String): Boolean = 
     if (toCheck.size < 2)
       true
@@ -38,18 +36,16 @@ object _004_Naive {
     search(1, 1, 1)
   }
 
-  def runOn(limit: Long) = {
-    println(findLargestPalindromeProductOfNumbersLessThan(limit))
-    println("Naive solution to problem 4 took " +
-            Timer.timeInMilliseconds(() =>
-              findLargestPalindromeProductOfNumbersLessThan(limit)) +
-            "ms.")
-  }
+  val defaultLimit = 1000
 
   def main(args: Array[String]) =
     if (args.length == 1)
-      runOn(java.lang.Long.parseLong(args(0)))
+      Runner.printAndTime(() => 
+        findLargestPalindromeProductOfNumbersLessThan(java.lang.Long.parseLong(args(0))).toString,
+        "Naive solution to problem 4")
     else
-      runOn(defaultLimit)
+      Runner.printAndTime(() => 
+        findLargestPalindromeProductOfNumbersLessThan(defaultLimit).toString,
+        "Naive solution to problem 4")
 
 }

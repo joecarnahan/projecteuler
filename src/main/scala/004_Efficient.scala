@@ -11,8 +11,6 @@
  */
 object _004_Efficient {
 
-  val defaultLimit = 1000
-
   def isPalindrome(toCheck: String): Boolean = 
     if (toCheck.size < 2)
       true
@@ -72,18 +70,16 @@ object _004_Efficient {
     search(a, b, findInitialStepB(b), 1)
   }
 
-  def runOn(limit: Long) = {
-    println(findLargestPalindromeProductOfNumbersLessThan(limit))
-    println("Efficient solution to problem 4 took " +
-            Timer.timeInMilliseconds(() =>
-              findLargestPalindromeProductOfNumbersLessThan(limit)) +
-            "ms.")
-  }
+  val defaultLimit = 1000
 
   def main(args: Array[String]) =
     if (args.length == 1)
-      runOn(java.lang.Long.parseLong(args(0)))
+      Runner.printAndTime(() => 
+        findLargestPalindromeProductOfNumbersLessThan(java.lang.Long.parseLong(args(0))).toString,
+        "Efficient solution to problem 4")
     else
-      runOn(defaultLimit)
+      Runner.printAndTime(() => 
+        findLargestPalindromeProductOfNumbersLessThan(defaultLimit).toString,
+        "Efficient solution to problem 4")
 
 }
