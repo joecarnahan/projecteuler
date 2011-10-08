@@ -26,5 +26,31 @@ object Common {
     sieve(from(2))
   }
 
+  /**
+   * Gets all of the prime factors of a given number, including duplicates.
+   * So, for example, when given 25, this function returns List(5, 5) as its
+   * result.
+   *
+   * @param toFactor
+   *          the number to factor
+   */
+  def getFactors(toFactor: Long): List[Long] = {
+
+    def getFactorsRec(remainingToFactor: Long, 
+                      primes: Stream[Long], 
+                      factors: List[Long]): List[Long] =
+      if (remainingToFactor == primes.head)
+        primes.head :: factors
+      else if ((remainingToFactor % primes.head) == 0L)
+        getFactorsRec(remainingToFactor / primes.head,
+                      sieveOfErasthones,
+                      primes.head :: factors)
+      else
+        getFactorsRec(remainingToFactor, primes.tail, factors)
+
+    getFactorsRec(toFactor, sieveOfErasthones, List[Long]())
+    
+  }
+
 }
 
