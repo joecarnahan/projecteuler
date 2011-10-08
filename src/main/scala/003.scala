@@ -5,35 +5,17 @@
  */
 object _003 {
 
-  /**
-   * Builds a stream of prime numbers.
-   *
-   * @return All of the prime numbers, evaluated lazily
-   */
-  def sieveOfErasthones(): Stream[Long] = {
-
-    def from(value: Long): Stream[Long] =
-      Stream.cons(value, from(value + 1))
-
-    def sieve(stream: Stream[Long]): Stream[Long] =
-      Stream.cons(stream.head, 
-                  sieve(stream.tail.filter((x: Long) => 
-                                           (x % stream.head) != 0 )))
-
-    sieve(from(2))
-  }
-
   def findLargestPrimeFactor(toFactor: Long): Long = {
 
     def findLargestPrimeFactor(current: Long, primes: Stream[Long]): Long =
       if (primes.head > scala.math.sqrt(current).toLong)
         current
       else if ((current % primes.head) == 0)
-        findLargestPrimeFactor(current / primes.head, sieveOfErasthones)
+        findLargestPrimeFactor(current / primes.head, Common.sieveOfErasthones)
       else
         findLargestPrimeFactor(current, primes.tail)
 
-    findLargestPrimeFactor(toFactor, sieveOfErasthones)
+    findLargestPrimeFactor(toFactor, Common.sieveOfErasthones)
   }
 
   val defaultComposite = 600851475143L
