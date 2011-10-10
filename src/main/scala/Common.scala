@@ -52,5 +52,42 @@ object Common {
     
   }
 
+  /**
+   * Removes the first element of the given list that matches the given
+   * predicate, if any.
+   *
+   * @param list
+   *          the list from which to remove the element
+   * @param toRemove
+   *          a predicate indicating which element to remove
+   * @return a new list with the selected object removed, or the same
+   *         list if no objects satisfy the given predicate
+   */
+  def removeFirst[T](list: List[T], toRemove: (T) => Boolean): List[T] = {
+    def search(toProcess: List[T], processed: List[T]): List[T] =
+      toProcess match {
+        case Nil => list
+        case head :: tail => 
+          if (toRemove(head))
+            processed.reverse ++ tail
+          else
+            search(tail, head :: processed)
+      }
+    search(list, Nil)
+  }
+
+  /**
+   * Removes the first occurrence of the given object from the given list.
+   *
+   * @param list
+   *          the list from which to remove the element
+   * @param toRemove
+   *          the element to remove
+   * @return a new list with the selected object removed, or the same
+   *         list if the given object is not in the list
+   */
+  def removeFirst[T](list: List[T], toRemove: T): List[T] = 
+    removeFirst(list, (t: T) => t == toRemove)
+
 }
 
