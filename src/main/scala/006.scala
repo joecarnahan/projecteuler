@@ -79,8 +79,8 @@ object _006 {
   val defaultLimit = 100L
 
   def main(args: Array[String]) =
-    Runner.run(args, defaultLimit,
-               differenceBetweenSumOfSquaresAndSquareOfSums(_).toString,
-               "Solution to problem 6")
+    Runner.runLong(args, defaultLimit,
+                   differenceBetweenSumOfSquaresAndSquareOfSums(_).toString,
+                   "Solution to problem 6")
 
 }

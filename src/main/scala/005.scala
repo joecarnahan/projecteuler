@@ -58,8 +58,8 @@ object _005 {
   val defaultLimit = 20L
 
   def main(args: Array[String]) =
-    Runner.run(args, defaultLimit,
-               findSmallestProductOfNumbersUpTo(_).toString,
-               "Solution to problem 5")
+    Runner.runLong(args, defaultLimit,
+                   findSmallestProductOfNumbersUpTo(_).toString,
+                   "Solution to problem 5")
 
 }

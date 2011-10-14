@@ -29,8 +29,8 @@ object _002_Naive {
   val defaultLimit = 4000000L
 
   def main(args: Array[String]) = 
-    Runner.run(args, defaultLimit,
-               computeValuesUpTo(_).toString,
-               "Naive solution to problem 2")
+    Runner.runLong(args, defaultLimit,
+                   computeValuesUpTo(_).toString,
+                   "Naive solution to problem 2")
 
 }

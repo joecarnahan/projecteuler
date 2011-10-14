@@ -35,8 +35,8 @@ object _002_Efficient {
   val defaultLimit = 4000000L
 
   def main(args: Array[String]) = 
-    Runner.run(args, defaultLimit,
-               computeValuesUpTo(_).toString,
-               "Efficient solution to problem 2")
+    Runner.runLong(args, defaultLimit,
+                   computeValuesUpTo(_).toString,
+                   "Efficient solution to problem 2")
 
 }

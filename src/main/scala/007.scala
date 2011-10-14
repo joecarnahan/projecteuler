@@ -16,8 +16,8 @@ object _007 {
   val defaultLimit = 10001L
 
   def main(args: Array[String]) =
-    Runner.run(args, defaultLimit,
-               getNthPrime(_).toString,
-               "Solution to problem 7")
+    Runner.runLong(args, defaultLimit,
+                   getNthPrime(_).toString,
+                   "Solution to problem 7")
 
 }
