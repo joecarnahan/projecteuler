@@ -1,0 +1,5 @@
+Joe@Greenwood ~/repositories/projecteuler
+$ scala -cp target/scala-2.9.1/classes _010
+142913828922
+Solution to problem 10 took 2739846.85ms.
+
