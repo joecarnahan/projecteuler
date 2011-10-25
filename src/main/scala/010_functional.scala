@@ -1,9 +1,10 @@
 /**
- * My solution to problem 10 of Project Euler.
+ * My solution to problem 10 of Project Euler using a functional
+ * implementation of the Sieve of Erasthones.
  *
  * @author Joe Carnahan (joseph.carnahan@gmail.com)
  */
-object _010 {
+object _010_functional {
 
   def getSumOfPrimesLessThan(limit: Long): Long =
     Common.sieveOfErasthones.takeWhile(_ < limit).sum
