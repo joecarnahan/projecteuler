@@ -29,17 +29,29 @@ object _011 {
 
   /**
    * Converts the given string to a two-dimensional array and finds the
-   * largest product of any sequence of four adjacent numbers in the 2D array.
+   * largest product of any sequence of adjacent numbers in the 2D array.
    *
    * @param toProcess
    *          the string to search
+   * @param sequenceSize
+   *          the length of sequence to search for
    * @return the largest product of any four numbers in a line vertically,
    *         horizontally, or diagonally in the array
    */
-  def findLargestProductOfFour(toProcess: String): Long = {
+  def findLargestProductOfFour(toProcess: String,
+                               sequenceSize: Int): Long = {
 
+    /**
+     * Given a list of sequences of numbers, returns the product of the
+     * sequence that has the largest product.
+     *
+     * @param seqs
+     *          the sequences to examine
+     * @return the product of the sequence with the largest value, or 
+     *         <code>scala.Long.MinValue</code> if no sequences are given
+     */
     def maxProduct(seqs: Seq[Seq[Long]]): Long = {
-      val initial: (Long, Seq[Long]) = (0L, List[Long]())
+      val initial: (Long, Seq[Long]) = (scala.Long.MinValue, List[Long]())
       seqs.foldLeft(initial)((best: (Long, Seq[Long]), next: Seq[Long]) => {
           val nextProduct = next.product
           if (nextProduct > best._1)
@@ -49,11 +61,54 @@ object _011 {
         })._1
     }
 
+    /**
+     * Returns all of the diagonals of the given rectangular grid.
+     *
+     * @param grid
+     *          the grid to process
+     * @return all of its diagonals
+     */
+    def buildDiagonals(grid: Array[Array[Long]]): List[List[Long]] = {
+
+      //def buildDiagonalsFromTopRight(g: Array[Array[Long]]): List[List[Long]] = {
+        //def rec(row: Int, col: Int, acc: List[List[Long]]): List[List[Long]] =
+          //if (row >= g.length)
+            //if (col >= g(0).length)
+              //acc
+            //else
+              //rec(, col + 1, List[Long]() :: acc)
+          //else if (col >= g(0).length)
+            //rec(row + 1, col - 1, acc)
+          //else 
+            //acc match {
+              //case Nil => 
+                //rec(row + 1, col - 1, List(List(g(row)(col))))
+              //case head :: tail => 
+                //rec(row + 1, col - 1, (g(row)(col) :: head) :: tail)
+            //}
+        //rec(0, 0, List[List[Long]]())
+      //}
+
+      def buildDiagonalsFromTopRight(g: Array[Array[Long]]): List[List[Long]] = {
+        // TODO
+        List[List[Long]]()
+      }
+
+      // debug
+      val result = (buildDiagonalsFromTopRight(grid) ++ buildDiagonalsFromTopRight(grid.transpose))
+      println(result.take(10))
+      result
+      // enddebug
+    }
+
     val numbers = parseString(toProcess)
     val rowProducts = numbers.map((a: Array[Long]) => 
-      Common.findLargestProduct(a.toList, 4))
-    // TODO RESUME HERE
-    maxProduct(rowProducts)
+      Common.findLargestProduct(a.toList, sequenceSize))
+    val colProducts = numbers.transpose.map((a: Array[Long]) => 
+      Common.findLargestProduct(a.toList, sequenceSize))
+    val diagonalProducts = buildDiagonals(numbers).map((a: List[Long]) => 
+      Common.findLargestProduct(a.toList, sequenceSize))
+    maxProduct(rowProducts ++ colProducts ++ diagonalProducts)
 
   }
 
@@ -85,7 +140,7 @@ object _011 {
 
   def main(args: Array[String]) =
     Runner.runString(args, defaultString,
-                     findLargestProductOfFour(_).toString,
+                     findLargestProductOfFour(_, 4).toString,
                      "Solution to problem 11")
 
 }
