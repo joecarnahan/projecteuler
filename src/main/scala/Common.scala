@@ -148,5 +148,55 @@ object Common {
   def removeFirst[T](list: List[T], toRemove: T): List[T] = 
     removeFirst(list, (t: T) => t == toRemove)
 
+  /**
+   * Finds the sublist of the given list with the given length that has the
+   * largest product.
+   * 
+   * @param toSearch
+   *          the list to search
+   * @param sequenceSize
+   *          the size of sublists of the given list to search
+   * @return the sublist of the given list with the given length that has the
+   *         largest product
+   */
+  def findLargestProduct[T](toSearch: List[T], sequenceSize: Int)
+                           (implicit num: Numeric[T]): List[T] = {
+
+    /**
+     * Searches the remaining digits in the list for any sequence that is the
+     * same length as the given sequence and that has a larger product.
+     *
+     * @param previous
+     *          the last sequence of digits that we considered
+     * @param best
+     *          the largest product found so far
+     * @param remaining
+     *          the remaining digits to consider
+     * @return the largest product of a sequence in this string
+     */
+    def search(current: List[T], bestList: List[T], best: T, remaining: List[T]): List[T] =
+      remaining match {
+        case Nil => bestList
+        case head :: tail => {
+          val newList = current.tail ++ List(head)
+          if (num.gt(head, current.head)) {
+            val newProduct = newList.product(num)
+            if (num.gt(newProduct, best))
+              search(newList, newList, newProduct, tail)
+            else
+              search(newList, bestList, best, tail)
+          }
+          else
+            search(newList, bestList, best, tail)
+        }
+      }
+
+    if (toSearch.size < sequenceSize)
+      sys.error("List must have at least " + sequenceSize.toString + " elements")
+    val (initialList, remainder) = toSearch.splitAt(sequenceSize)
+    search(initialList, initialList, initialList.product(num), remainder)
+
+  }
+
 }
 

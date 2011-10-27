@@ -22,47 +22,9 @@ object _008 {
    *         the given string
    */
   def getLargestProductOfDigits(numberString: String, sequenceSize: Int): Int = {
-
-    /**
-     * Converts this string to a list of digits, assuming that every character
-     * in this string is a character between '0' and '9'.
-     *
-     * @return the digits of this string
-     */
-    def getNumberList: List[Int] = 
-      numberString.map((c: Char) => java.lang.Character.digit(c, 10)).toList
-
-    /**
-     * Searches the remaining digits in the list for any sequence that is the
-     * same length as the given sequence and that has a larger product.
-     *
-     * @param previous
-     *          the last sequence of digits that we considered
-     * @param best
-     *          the largest product found so far
-     * @param remaining
-     *          the remaining digits to consider
-     * @return the largest product of a sequence in this string
-     */
-    def search(current: List[Int], best: Int, remaining: List[Int]): Int =
-      remaining match {
-        case Nil => best
-        case head :: tail => {
-          val newList = current.tail ++ List(head)
-          if (head > current.head) {
-            val newProduct = newList.product
-            search(newList, if (newProduct > best) newProduct else best, tail)
-          }
-          else
-            search(newList, best, tail)
-        }
-      }
-
-    if (numberString.length < sequenceSize)
-      sys.error("String must have at least " + sequenceSize.toString + " digits")
-    val (initialList, remainder) = getNumberList.splitAt(sequenceSize)
-    search(initialList, initialList.product, remainder)
-
+    val numberList = numberString.map((c: Char) => 
+      java.lang.Character.digit(c, 10)).toList
+    Common.findLargestProduct(numberList, sequenceSize).product
   }
 
   /**
