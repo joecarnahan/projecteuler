@@ -192,7 +192,7 @@ object Common {
       }
 
     if (toSearch.size < sequenceSize)
-      sys.error("List must have at least " + sequenceSize.toString + " elements")
+      toSearch
     val (initialList, remainder) = toSearch.splitAt(sequenceSize)
     search(initialList, initialList, initialList.product(num), remainder)
 
