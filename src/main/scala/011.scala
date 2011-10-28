@@ -70,35 +70,31 @@ object _011 {
      */
     def buildDiagonals(grid: Array[Array[Long]]): List[List[Long]] = {
 
-      //def buildDiagonalsFromTopRight(g: Array[Array[Long]]): List[List[Long]] = {
-        //def rec(row: Int, col: Int, acc: List[List[Long]]): List[List[Long]] =
-          //if (row >= g.length)
-            //if (col >= g(0).length)
-              //acc
-            //else
-              //rec(, col + 1, List[Long]() :: acc)
-          //else if (col >= g(0).length)
-            //rec(row + 1, col - 1, acc)
-          //else 
-            //acc match {
-              //case Nil => 
-                //rec(row + 1, col - 1, List(List(g(row)(col))))
-              //case head :: tail => 
-                //rec(row + 1, col - 1, (g(row)(col) :: head) :: tail)
-            //}
-        //rec(0, 0, List[List[Long]]())
-      //}
+      def buildDiagonalsOneDirection(g: Array[Array[Long]]): List[List[Long]] = {
 
-      def buildDiagonalsFromTopRight(g: Array[Array[Long]]): List[List[Long]] = {
-        // TODO
-        List[List[Long]]()
+        val maxRow = g.length - 1
+        val maxCol = g(0).length - 1
+
+        def rec(row: Int, col: Int, prevCol: Int, acc: List[List[Long]]): List[List[Long]] =
+          if ((row > maxRow) && (prevCol > maxCol))
+            acc
+          else if (col < 0)
+            rec(0, prevCol + 1, prevCol + 1, List[Long]() :: acc)
+          else if (col > maxCol)
+            rec(col - maxCol, maxCol, prevCol, acc)
+          else 
+            rec(row + 1, col - 1, prevCol, (g(row)(col) :: acc.head) :: acc.tail)
+
+        // It's possible for rec() to add an extra empty list, so we trim it here.
+        rec(0, 0, 0, List(List[Long]())) match {
+          case Nil :: tail => tail
+          case x => x
+        }
+
       }
 
-      // debug
-      val result = (buildDiagonalsFromTopRight(grid) ++ buildDiagonalsFromTopRight(grid.transpose))
-      println(result.take(10))
-      result
-      // enddebug
+      buildDiagonalsOneDirection(grid) ++ 
+        buildDiagonalsOneDirection(grid.transpose)
     }
 
     val numbers = parseString(toProcess)
