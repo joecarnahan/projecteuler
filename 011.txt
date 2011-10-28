@@ -1,0 +1,109 @@
+A B
+C D
+
+maxRow = 1
+maxCol = 1
+
+Row Col PrevCol Acc
+0    0  0       ()           Add (Row, Col) to list and recurse with row += 1, col -= 1, and prevCol = prevCol
+1   -1  0       (A)          Add new empty list and recurse with row = 0, col = prevCol + 1, and prevCol += 1
+0    1  1       ()(A)        Add (Row, Col) to list and recurse with row += 1, col -= 1, and prevCol = prevCol
+1    0  1       (B)(A)       Add (Row, Col) to list and recurse with row += 1, col -= 1, and prevCol = prevCol
+2   -1  1       (C B)(A)     Add new empty list and recurse with row = 0, col = prevCol + 1, and prevCol += 1
+0    2  2       ()(C B)(A)   Skip to row = (col - maxCol) and col = maxCol
+1    1  2       ()(C B)(A)   Add (Row, Col) to list and recurse with row += 1, col -= 1, and prevCol = prevCol
+2    0  2       (D)(C B)(A)  Done because row > maxRow and prevCol > maxCol
+
+----------
+
+A B C
+D E F
+
+maxRow = 1
+maxCol = 2
+
+Row Col PrevCol Acc
+0    0  0       ()                Add (Row, Col) to list and recurse with row += 1, col -= 1, and prevCol = prevCol
+1   -1  0       (A)               Add new empty list and recurse with row = 0, col = prevCol + 1, and prevCol += 1
+0    1  1       ()(A)             Add (Row, Col) to list and recurse with row += 1, col -= 1, and prevCol = prevCol
+1    0  1       (B)(A)            Add (Row, Col) to list and recurse with row += 1, col -= 1, and prevCol = prevCol
+2   -1  1       (D B)(A)          Add new empty list and recurse with row = 0, col = prevCol + 1, and prevCol += 1
+0    2  2       ()(D B)(A)        Add (Row, Col) to list and recurse with row += 1, col -= 1, and prevCol = prevCol
+1    1  2       (C)(D B)(A)       Add (Row, Col) to list and recurse with row += 1, col -= 1, and prevCol = prevCol
+2    0  2       (E C)(D B)(A)     Add new empty list and recurse with row = 0, col = prevCol + 1, and prevCol += 1
+0    3  3       ()(E C)(D B)(A)   Skip to row = (col - maxCol) and col = maxCol
+1    3  3       ()(E C)(D B)(A)   Add (Row, Col) to list and recurse with row += 1, col -= 1, and prevCol = prevCol
+2    2  3       (F)(E C)(D B)(A)  Done because row > maxRow and prevCol > maxCol
+
+----------
+
+A B
+C D
+E F
+
+maxRow = 2
+maxCol = 1
+
+Row Col PrevCol Acc
+0    0  0       ()                Add (Row, Col) to list and recurse with row += 1, col -= 1, and prevCol = prevCol
+1   -1  0       (A)               Add new empty list and recurse with row = 0, col = prevCol + 1, and prevCol += 1
+0    1  1       ()(A)             Add (Row, Col) to list and recurse with row += 1, col -= 1, and prevCol = prevCol
+1    0  1       (B)(A)            Add (Row, Col) to list and recurse with row += 1, col -= 1, and prevCol = prevCol
+2   -1  1       (C B)(A)          Add new empty list and recurse with row = 0, col = prevCol + 1, and prevCol += 1
+0    2  2       ()(C B)(A)        Skip to row = (col - maxCol) and col = maxCol
+1    1  2       ()(C B)(A)        Add (Row, Col) to list and recurse with row += 1, col -= 1, and prevCol = prevCol
+2    0  2       (D)(C B)(A)       Add (Row, Col) to list and recurse with row += 1, col -= 1, and prevCol = prevCol
+3   -1  2       (E D)(C B)(A)     Add new empty list and recurse with row = 0, col = prevCol + 1, and prevCol += 1
+0    3  3       ()(E D)(C B)(A)   Skip to row = (col - maxCol) and col = maxCol
+2    1  3       ()(E D)(C B)(A)   Add (Row, Col) to list and recurse with row += 1, col -= 1, and prevCol = prevCol
+3    0  3       (F)(E D)(C B)(A)  Done because row > maxRow and prevCol > maxCol
+
+----------
+
+A
+
+maxRow = 0
+maxCol = 0
+
+Row Col PrevCol Acc
+0    0  0       ()     Add (Row, Col) to list and recurse with row += 1, col -= 1, and prevCol = prevCol
+1   -1  0       (A)    Add new empty list and recurse with row = 0, col = prevCol + 1, and prevCol += 1
+0    1  1       ()(A)  Skip to row = (col - maxCol) and col = maxCol
+1    1  1       ()(A)  Done because row > maxRow and prevCol > maxCol
+
+----------
+
+A B C
+
+maxRow = 0
+maxCol = 2
+
+Row Col PrevCol Acc
+0    0  0       ()           Add (Row, Col) to list and recurse with row += 1, col -= 1, and prevCol = prevCol
+1   -1  0       (A)          Add new empty list and recurse with row = 0, col = prevCol + 1, and prevCol += 1
+0    1  1       ()(A)        Add (Row, Col) to list and recurse with row += 1, col -= 1, and prevCol = prevCol
+1    0  1       (B)(A)       Add new empty list and recurse with row = 0, col = prevCol + 1, and prevCol += 1
+0    2  2       ()(B)(A)     Add (Row, Col) to list and recurse with row += 1, col -= 1, and prevCol = prevCol
+1    1  2       (C)(B)(A)    Add new empty list and recurse with row = 0, col = prevCol + 1, and prevCol += 1
+0    3  3       ()(C)(B)(A)  Skip to row = (col - maxCol) and col = maxCol
+1    2  3       ()(C)(B)(A)  Done because row > maxRow and prevCol > maxCol
+
+----------
+
+A
+B
+C
+
+maxRow = 2
+maxCol = 0
+
+Row Col PrevCol Acc
+0    0  0       ()           Add (Row, Col) to list and recurse with row += 1, col -= 1, and prevCol = prevCol
+1   -1  0       (A)          Add new empty list and recurse with row = 0, col = prevCol + 1, and prevCol += 1
+0    1  1       ()(A)        Skip to row = (col - maxCol) and col = maxCol
+1    0  1       ()(A)        Add (Row, Col) to list and recurse with row += 1, col -= 1, and prevCol = prevCol
+2   -1  1       (B)(A)       Add new empty list and recurse with row = 0, col = prevCol + 1, and prevCol += 1
+0    2  2       ()(B)(A)     Skip to row = (col = maxCol) and col = maxCol
+2    0  2       ()(B)(A)     Add (Row, Col) to list and recurse with row += 1, col -= 1, and prevCol = prevCol
+3   -1  2       (C)(B)(A)    Done because row > maxRow and prevCol > maxCol
+
