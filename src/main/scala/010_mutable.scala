@@ -36,6 +36,6 @@ object _010_mutable {
   def main(args: Array[String]) =
     Runner.runLong(args, defaultLimit,
                    getSumOfPrimesLessThan(_).toString,
-                   "Solution to problem 10")
+                   "Mutable-state solution to problem 10")
 
 }

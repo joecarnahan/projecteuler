@@ -14,6 +14,6 @@ object _010_functional {
   def main(args: Array[String]) =
     Runner.runLong(args, defaultLimit,
                    getSumOfPrimesLessThan(_).toString,
-                   "Solution to problem 10")
+                   "Functional solution to problem 10")
 
 }
