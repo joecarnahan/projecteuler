@@ -8,26 +8,12 @@
 object _012_Naive {
 
   /**
-   * Builds a stream of triangle numbers.
-   *
-   * @return a lazily-constructed sequence of triangle numbers
-   */
-  def getTriangleNumbers: Seq[Long] = {
-
-    def next(first: Long, nextNatural: Long): Stream[Long] =
-      Stream.cons(first, next(first + nextNatural, nextNatural + 1))
-
-    next(1, 2)
-
-  }
-
-  /**
    * Given a number, get the number of divisors that it has.
    *
    * @param toAnalyze
    *          the number to analyze
    * @return the number of natural numbers that divide evenly into 
-             <code>toAnalyze</code>
+   *         <code>toAnalyze</code>
    */
   def getNumDivisors(toAnalyze: Long): Long = {
 
@@ -62,7 +48,7 @@ object _012_Naive {
       else
         search(sequence.tail)
 
-    search(getTriangleNumbers)
+    search(Common.getTriangleNumbers)
 
   }
 
@@ -71,6 +57,6 @@ object _012_Naive {
   def main(args: Array[String]) =
     Runner.runLong(args, defaultLimit,
                    getTriangleNumberWithDivisors(_).toString,
-                   "Solution to problem 12")
+                   "Naive solution to problem 12")
 
 }

@@ -198,5 +198,19 @@ object Common {
 
   }
 
+  /**
+   * Builds a stream of triangle numbers.
+   *
+   * @return a lazily-constructed sequence of triangle numbers
+   */
+  def getTriangleNumbers: Seq[Long] = {
+
+    def next(first: Long, nextNatural: Long): Stream[Long] =
+      Stream.cons(first, next(first + nextNatural, nextNatural + 1))
+
+    next(1, 2)
+
+  }
+
 }
 
