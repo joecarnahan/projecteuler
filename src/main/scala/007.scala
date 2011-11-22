@@ -11,7 +11,7 @@
 object _007 {
 
   def getNthPrime(index: Long): Long =
-    Common.sieveOfErasthones.drop(index.asInstanceOf[Int] - 1).head
+    Primes.sieveOfErasthones.drop(index.asInstanceOf[Int] - 1).head
 
   val defaultLimit = 10001L
 

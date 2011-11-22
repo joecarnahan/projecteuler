@@ -7,7 +7,7 @@
 object _010_functional {
 
   def getSumOfPrimesLessThan(limit: Long): Long =
-    Common.sieveOfErasthones.takeWhile(_ < limit).sum
+    Primes.sieveOfErasthones.takeWhile(_ < limit).sum
 
   val defaultLimit = 2000000L
 

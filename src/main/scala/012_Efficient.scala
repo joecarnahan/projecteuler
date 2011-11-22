@@ -42,7 +42,7 @@ object _012_Efficient {
     def findTriangleNumberWithDivisors(n: Long, dn: Long): Long = {
       val newN = n + 1
       val n1 = if ((newN % 2) == 0) newN / 2 else newN
-      val dn1 = findDn1(Common.sieveOfErasthones, n1, 1)
+      val dn1 = findDn1(Primes.sieveOfErasthones, n1, 1)
       if ((dn * dn1) > numDivisors)
         newN * n / 2
       else

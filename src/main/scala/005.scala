@@ -43,7 +43,7 @@ object _005 {
      *          should be merged
      */
     def addFactorsFrom(toFactor: Long, factors: List[Long]): List[Long] =
-      mergeLists(Common.getFactors(toFactor), factors)
+      mergeLists(Primes.getFactors(toFactor), factors)
 
     def collectFactors(next: Long, factors: List[Long]): List[Long] =
       if (next > limit)

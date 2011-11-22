@@ -11,11 +11,11 @@ object _003 {
       if (primes.head > scala.math.sqrt(current).toLong)
         current
       else if ((current % primes.head) == 0)
-        findLargestPrimeFactor(current / primes.head, Common.sieveOfErasthones)
+        findLargestPrimeFactor(current / primes.head, Primes.sieveOfErasthones)
       else
         findLargestPrimeFactor(current, primes.tail)
 
-    findLargestPrimeFactor(toFactor, Common.sieveOfErasthones)
+    findLargestPrimeFactor(toFactor, Primes.sieveOfErasthones)
   }
 
   val defaultComposite = 600851475143L
