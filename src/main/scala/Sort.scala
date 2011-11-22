@@ -59,7 +59,21 @@ object Sort {
    * @return a sequence containing the elements of the given sequence in sorted
    *         order
    */
-  def quickSort[A](seq: Seq[A])(implicit ordering: Ordering[A]): List[A] = insertionSort(seq)(ordering)
+  def quickSort[A](seq: Seq[A])(implicit ordering: Ordering[A]): List[A] = 
+    // TODO
+    insertionSort(seq)(ordering)
+
+  /**
+   * Sorts a sequence using heapsort.
+   *
+   * @param toSort
+   *          the sequence to sort
+   * @return a sequence containing the elements of the given sequence in sorted
+   *         order
+   */
+  def heapSort[A](seq: Seq[A])(implicit ordering: Ordering[A]): List[A] = 
+    // TODO
+    insertionSort(seq)(ordering)
 
 }
 
@@ -136,6 +150,7 @@ object SortTest {
         parseInts(args)
     println(insertionSort(toSort))
     println(quickSort(toSort))
+    println(heapSort(toSort))
   }
 
 }
