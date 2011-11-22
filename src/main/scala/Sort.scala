@@ -52,6 +52,12 @@ object Sort {
   }
 
   /**
+   * Threshold value, below which all sorting algorithms default to using
+   * insertion sort.
+   */
+  val sortSizeThreshold = 10
+
+  /**
    * Sorts a sequence using quicksort.
    *
    * @param toSort
@@ -74,6 +80,54 @@ object Sort {
   def heapSort[A](seq: Seq[A])(implicit ordering: Ordering[A]): List[A] = 
     // TODO
     insertionSort(seq)(ordering)
+
+  /**
+   * Merges two sorted sequences.
+   *
+   * @param seq1 
+   *          the first sorted sequence to examine
+   * @param seq2
+   *          the second sorted sequence to examine
+   * @return a list that contains all of the elements from both sequences
+   *         arranged in sorted order
+   */
+  def merge[A](seq1: Seq[A], seq2: Seq[A])(implicit ordering: Ordering[A]): List[A] = {
+
+    def addAll(s: Seq[A], acc: List[A]): List[A] =
+      if (s.isEmpty)
+        acc
+      else
+        addAll(s.tail, s.head :: acc)
+
+    def mergeRec(s1: Seq[A], s2: Seq[A], acc: List[A]): List[A] =
+      if (s1.isEmpty)
+        addAll(s2, acc).reverse
+      else if (s2.isEmpty)
+        addAll(s1, acc).reverse
+      else if (ordering.lt(s1.head, s2.head))
+        mergeRec(s1.tail, s2, s1.head :: acc)
+      else
+        mergeRec(s1, s2.tail, s2.head :: acc)
+
+    mergeRec(seq1, seq2, List[A]())
+
+  }
+
+  /**
+   * Sorts a sequence using merge sort.
+   *
+   * @param toSort
+   *          the sequence to sort
+   * @return a sequence containing the elements of the given sequence in sorted
+   *         order
+   */
+  def mergeSort[A](seq: Seq[A])(implicit ordering: Ordering[A]): List[A] =
+    if (seq.size < sortSizeThreshold)
+      insertionSort(seq)(ordering)
+    else {
+      val (list1, list2) = seq.splitAt(seq.size / 2)
+      merge(mergeSort(list1), mergeSort(list2))
+    }
 
 }
 
@@ -148,9 +202,10 @@ object SortTest {
         randomList(java.lang.Integer.parseInt(args(0)))
       else
         parseInts(args)
-    println(insertionSort(toSort))
-    println(quickSort(toSort))
-    println(heapSort(toSort))
+    Runner.printAndTime(() => insertionSort(toSort).toString, "Insertion sort")
+    Runner.printAndTime(() => quickSort(toSort).toString, "Quicksort")
+    Runner.printAndTime(() => heapSort(toSort).toString, "Heapsort")
+    Runner.printAndTime(() => mergeSort(toSort).toString, "Mergesort")
   }
 
 }
