@@ -59,16 +59,33 @@ object Sort {
 
   /**
    * Sorts a sequence using quicksort.
+   * <p>
+   * TODO: Reimplement this tail-recursively so that it doesn't blow the stack.
    *
    * @param toSort
    *          the sequence to sort
    * @return a sequence containing the elements of the given sequence in sorted
    *         order
    */
-  def quickSort[A](seq: Seq[A])(implicit ordering: Ordering[A]): List[A] = 
-    // TODO
-    insertionSort(seq)(ordering)
+  def quickSort[A](seq: Seq[A])(implicit ordering: Ordering[A]): List[A] = {
 
+    def partition(pivot: A, toPartition: Seq[A], below: List[A], notBelow: List[A]): (List[A], List[A]) = 
+      if (toPartition.isEmpty)
+        (below, notBelow)
+      else if (ordering.lt(toPartition.head, pivot))
+        partition(pivot, toPartition.tail, toPartition.head :: below, notBelow)
+      else
+        partition(pivot, toPartition.tail, below, toPartition.head :: notBelow)
+
+    if (seq.size < sortSizeThreshold)
+      insertionSort(seq)(ordering)
+    else {
+      val (list1, list2) = partition(seq.head, seq, List[A](), List[A]())
+      quickSort(list1) ++ quickSort(list2)
+    }
+
+  }
+    
   /**
    * Sorts a sequence using heapsort.
    *
