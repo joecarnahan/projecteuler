@@ -52,7 +52,7 @@ object Sort {
   }
 
   /**
-   * Threshold value, below which all sorting algorithms default to using
+   * Threshold value, below which other sorting algorithms default to using
    * insertion sort.
    */
   val sortSizeThreshold = 10
@@ -78,8 +78,7 @@ object Sort {
    *         order
    */
   def heapSort[A](seq: Seq[A])(implicit ordering: Ordering[A]): List[A] = 
-    // TODO
-    insertionSort(seq)(ordering)
+    (Heap[A](ordering.reverse) ++ seq).toList
 
   /**
    * Merges two sorted sequences.
