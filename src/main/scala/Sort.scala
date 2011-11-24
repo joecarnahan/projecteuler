@@ -68,10 +68,11 @@ object Sort {
   def quickSort[A](seq: Seq[A])(implicit ordering: Ordering[A]): Seq[A] =
     if (seq.size < sortSizeThreshold)
       insertionSort(seq)(ordering)
-    else
+    else {
       quickSort(seq.filter(ordering.lt(_,seq.head))) ++
-      seq.filter(ordering.eq(_,seq.head)) ++
+      seq.filter(ordering.equiv(_,seq.head)) ++
       quickSort(seq.filter(ordering.gt(_,seq.head)))
+    }
     
   /**
    * Sorts a sequence using heapsort.
@@ -136,60 +137,14 @@ object Sort {
 
 /**
  * Code for testing sorting functions.
- *
- * @author Joe Carnahan (joseph.carnahan@gmail.com)
  */
 object SortTest {
 
   import Sort._
   
   /**
-   * Generates a random list of positive and negative integers of similar
-   * magnitude to the given number with the given number of values.
-   *
-   * @param size
-   *          both a limit for how large the random numbers should be and the
-   *          size of the randomly-generated list
-   * @return a list of randomly-generated integers of the given size with
-   *         values of the given magnitude
-   */
-  def randomList(size: Int): List[Int] = {
-
-    def rng = new scala.util.Random()
-
-    def rec(acc: List[Int], sizeLeft: Int): List[Int] =
-      if (sizeLeft <= 0)
-        acc
-      else
-        rec((rng.nextInt(size * 2) - size) :: acc, sizeLeft - 1)
-
-    rec(List[Int](), size)
-
-  }
-
-  /**
-   * Parses the given sequence of strings and turns it into a list of integers.
-   *
-   * @param toParse
-   *          the strings to parse, which must all be string representations of
-   *          integers
-   * @return the given strings interpreted as integers
-   */
-  def parseInts(toParse: Seq[String]): List[Int] = {
-
-    def rec(acc: List[Int], remaining: Seq[String]): List[Int] =
-      if (remaining.isEmpty)
-        acc.reverse
-      else
-        rec(java.lang.Integer.parseInt(remaining.head) :: acc, remaining.tail)
-
-    rec(List[Int](), toParse)
-
-  }
-
-  /**
    * Generates a random list of integers or takes a list of integers as 
-   * arguments and sorts them using both quicksort and insertion sort.
+   * arguments and sorts them using each of the available sorting functions.
    *
    * @param args
    *          either an empty array, indicating that a list of 10 random
@@ -200,15 +155,19 @@ object SortTest {
   def main(args: Array[String]) = {
     val toSort =
       if (args.length == 0)
-        randomList(10)
+        Common.randomList(10)
       else if (args.length == 1)
-        randomList(java.lang.Integer.parseInt(args(0)))
+        Common.randomList(java.lang.Integer.parseInt(args(0)))
       else
-        parseInts(args)
-    Runner.printAndTime(() => insertionSort(toSort).toString, "Insertion sort")
-    Runner.printAndTime(() => quickSort(toSort).toString, "Quicksort")
-    Runner.printAndTime(() => heapSort(toSort).toString, "Heapsort")
-    Runner.printAndTime(() => mergeSort(toSort).toString, "Mergesort")
+        Common.parseInts(args)
+    List((insertionSort[Int] _, "Insertion sort"),
+         (quickSort[Int] _,     "Quicksort"),
+         (heapSort[Int] _,      "Heapsort"),
+         (mergeSort[Int] _,     "Merge sort")).map(
+      _ match {
+        case (sort, label) => 
+          Runner.printAndTime(() => sort(toSort).toString, label)
+      })
   }
 
 }

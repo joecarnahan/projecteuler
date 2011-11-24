@@ -106,4 +106,48 @@ object Common {
 
   }
 
+  /**
+   * Generates a random list of positive and negative integers of similar
+   * magnitude to the given number with the given number of values.
+   *
+   * @param size
+   *          both a limit for how large the random numbers should be and the
+   *          size of the randomly-generated list
+   * @return a list of randomly-generated integers of the given size with
+   *         values of the given magnitude
+   */
+  def randomList(size: Int): List[Int] = {
+
+    def rng = new scala.util.Random()
+
+    def rec(acc: List[Int], sizeLeft: Int): List[Int] =
+      if (sizeLeft <= 0)
+        acc
+      else
+        rec((rng.nextInt(size * 2) - size) :: acc, sizeLeft - 1)
+
+    rec(List[Int](), size)
+
+  }
+
+  /**
+   * Parses the given sequence of strings and turns it into a list of integers.
+   *
+   * @param toParse
+   *          the strings to parse, which must all be string representations of
+   *          integers
+   * @return the given strings interpreted as integers
+   */
+  def parseInts(toParse: Seq[String]): List[Int] = {
+
+    def rec(acc: List[Int], remaining: Seq[String]): List[Int] =
+      if (remaining.isEmpty)
+        acc.reverse
+      else
+        rec(java.lang.Integer.parseInt(remaining.head) :: acc, remaining.tail)
+
+    rec(List[Int](), toParse)
+
+  }
+
 }
