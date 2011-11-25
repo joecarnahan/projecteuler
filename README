@@ -4,3 +4,7 @@ Obviously, you can look at these if you're working on Project Euler.  But
 seriously, what would be the point of doing the project if not to figure the
 solutions out for yourself?
 
+*Edit:* So, I've started throwing other "oh, I should implement one of those
+in Scala" projects into here, like various algorithms and data structures.
+Eventually, I should pull those out into their own project, but for now, they
+can live here.
