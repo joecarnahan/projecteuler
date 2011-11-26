@@ -22,7 +22,8 @@ object Tree {
    *          the ordering to use on the elements
    * @return an empty AVL tree
    */
-  def avlTree[A](implicit ordering: Ordering[A]): Tree[A] = new DummyTree[A]
+  def avlTree[A](implicit ordering: Ordering[A]): Tree[A] =
+    new EmptyAVL[A](ordering)
 
   /**
    * Creates an empty red-black tree.
@@ -105,7 +106,7 @@ private trait BST[A] extends Tree[A] {
   def removeImpl(toRemove: A, removeOnlyOne: Boolean): Option[BST[A]]
 
   /**
-   * Removes and returns the minimum value in the given tree.
+   * Returns all instances of the minimum value in the given tree.
    *
    * @return the smallest value in the given tree, or None if the given tree is
    *         empty
@@ -114,8 +115,7 @@ private trait BST[A] extends Tree[A] {
 
 }
 
-private case class EmptyBST[A](ordering: Ordering[A]) 
-    extends BST[A] {
+private case class EmptyBST[A](ordering: Ordering[A]) extends BST[A] {
 
   override def add(toAdd: A): BST[A] = 
     NonemptyBST[A](OneItem(toAdd), ordering, this, this)
@@ -178,6 +178,100 @@ private case class NonemptyBST[A](values: NonemptyList[A], ordering: Ordering[A]
 
   override def toString = 
     "BST(" + values + ", " + left.toString + ", " + right.toString + ")"
+
+}
+
+/**
+ * Implementation of an AVL tree.
+ */
+private trait AVL[A] extends BST[A] {
+  // We specify that all operations on AVL trees produce AVL trees.
+  override def add(toAdd: A): AVL[A]
+  override def remove(toRemove: A): Option[AVL[A]] = removeImpl(toRemove, true)
+  override def removeAll(toRemove: A): Option[AVL[A]] = 
+    removeImpl(toRemove, false)
+  override def removeImpl(toRemove: A, removeOnlyOne: Boolean): Option[AVL[A]]
+
+  /**
+   * Indicates the height of this node, where leaves have a height of 1.
+   */
+  def height: Int
+}
+
+private case class EmptyAVL[A](ordering: Ordering[A]) extends AVL[A] {
+
+  override def add(toAdd: A): AVL[A] =
+    NonemptyAVL[A](OneItem(toAdd), ordering, 1, this, this)
+
+  override def removeImpl(toRemove: A, removeOnlyOne: Boolean): Option[AVL[A]] =
+    None
+    
+  override def minimum: Option[NonemptyList[A]] = None
+
+  override def toString = "Empty"
+
+  override def height = 0
+
+}
+
+private case class NonemptyAVL[A](values: NonemptyList[A], ordering: Ordering[A],
+  h: Int, left: AVL[A], right: AVL[A]) extends AVL[A] {
+
+  override def add(toAdd: A): AVL[A] = 
+    if (ordering.equiv(toAdd, values.head))
+      NonemptyAVL[A](MultipleItems(toAdd, values), ordering, h, left, right)
+    else if (ordering.lt(toAdd, values.head)) {
+      val newLeft = left.add(toAdd)
+      val newHeight = scala.math.max(newLeft.height, right.height) + 1
+      if ((newLeft.height - right.height) < 2)
+        NonemptyAVL[A](values, ordering, newHeight, newLeft, right)
+      else
+        NonemptyAVL[A](values, ordering, newHeight, newLeft, right).rotateRight
+    }
+    else {
+      val newRight = right.add(toAdd)
+      val newHeight = scala.math.max(left.height, newRight.height) + 1
+      if ((newRight.height - left.height) < 2)
+        NonemptyAVL[A](values, ordering, newHeight, left, newRight)
+      else
+        NonemptyAVL[A](values, ordering, newHeight, left, newRight).rotateLeft 
+    }
+
+  private def rotateLeft: NonemptyAVL[A] = {
+    // We should only ever call this method if the right-hand side is nonempty.
+    val nonemptyRight = right.asInstanceOf[NonemptyAVL[A]]
+    val leftMax = scala.math.max(left.height, nonemptyRight.left.height)
+    NonemptyAVL[A](nonemptyRight.values, ordering,
+                   scala.math.max(leftMax + 1, nonemptyRight.right.height) + 1,
+                   NonemptyAVL[A](values, ordering, leftMax + 1,
+                                  left, nonemptyRight.left),
+                   nonemptyRight.right)
+  }
+
+  private def rotateRight: NonemptyAVL[A] = {
+    // We should only ever call this method if the left-hand side is nonempty.
+    val nonemptyLeft = left.asInstanceOf[NonemptyAVL[A]]
+    val rightMax = scala.math.max(right.height, nonemptyLeft.right.height)
+    NonemptyAVL[A](nonemptyLeft.values, ordering,
+                   scala.math.max(rightMax + 1, nonemptyLeft.left.height) + 1,
+                   nonemptyLeft.left,
+                   NonemptyAVL[A](values, ordering, rightMax + 1,
+                                  nonemptyLeft.right, right))
+  }
+
+  override def minimum: Option[NonemptyList[A]] =
+    left match {
+      case EmptyAVL(_) => Some(values)
+      case _ => left.minimum
+    }
+
+  override def removeImpl(toRemove: A, removeOnlyOne: Boolean): Option[AVL[A]] =
+    sys.error("TODO")
+
+  override def toString =
+    "AVL(" + values + ", " + left.toString + ", " + right.toString + ")"
+
+  override def height = h
 
 }
 
@@ -246,8 +340,8 @@ object TreeTest {
                              (sortedValues, "sorted values"),
                              (reversedValues, "reverse-sorted values"))
 
-    List((Tree.binarySearchTree[Int], "Binary search tree") /*, 
-         (Tree.avlTree[Int], "AVL tree")*/ /*,
+    List((Tree.binarySearchTree[Int], "Binary search tree"), 
+         (Tree.avlTree[Int], "AVL tree") /*,
          (Tree.redBlackTree[Int], "Red-black tree") */).flatMap(
       _ match {
         case (tree, label1) => allValueLists.flatMap(
