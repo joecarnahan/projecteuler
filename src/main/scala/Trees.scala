@@ -171,10 +171,10 @@ private case class NonemptyBST[A](values: NonemptyList[A], ordering: Ordering[A]
       }
     else if (ordering.lt(toRemove, values.head))
       left.removeImpl(toRemove, removeOnlyOne).map((newLeft: BST[A]) =>
-        new NonemptyBST[A](values, ordering, newLeft, right))
+        NonemptyBST[A](values, ordering, newLeft, right))
     else
       right.removeImpl(toRemove, removeOnlyOne).map((newRight: BST[A]) =>
-        new NonemptyBST[A](values, ordering, left, newRight))
+        NonemptyBST[A](values, ordering, left, newRight))
 
   override def toString = 
     "BST(" + values + ", " + left.toString + ", " + right.toString + ")"
@@ -266,7 +266,49 @@ private case class NonemptyAVL[A](values: NonemptyList[A], ordering: Ordering[A]
     }
 
   override def removeImpl(toRemove: A, removeOnlyOne: Boolean): Option[AVL[A]] =
-    sys.error("TODO")
+    if (ordering.equiv(toRemove, values.head))
+      values match {
+        case MultipleItems(_, tail) if removeOnlyOne =>
+          Some(NonemptyAVL[A](tail, ordering, h, left, right))
+        case _ =>
+          left match {
+            case _: EmptyAVL[_] => Some(right)
+            case nonemptyLeft: NonemptyAVL[_] =>
+              right match {
+                case _: EmptyAVL[_] => Some(left)
+                case _ =>
+                  right.minimum.map((successor: NonemptyList[A]) => {
+                    // Calling Option.get here is safe because we are removing
+                    // the minimum value from a tree, and the minimum value must
+                    // exist in the tree or it wouldn't be the minimum value for
+                    // that tree!
+                    val newRight = right.removeAll(successor.head).get
+                    val newHeight = scala.math.max(left.height, 
+                                                   newRight.height) + 1
+                    if ((left.height - newRight.height) < 2)
+                      NonemptyAVL[A](successor, ordering, newHeight, left, newRight)
+                    else
+                      NonemptyAVL[A](successor, ordering, newHeight, left, newRight).rotateRight
+                  })
+              }
+          }
+      }
+    else if (ordering.lt(toRemove, values.head))
+      left.removeImpl(toRemove, removeOnlyOne).map((newLeft: AVL[A]) => {
+        val newHeight = scala.math.max(newLeft.height, right.height) + 1
+        if ((right.height - newLeft.height) < 2)
+          NonemptyAVL[A](values, ordering, newHeight, newLeft, right)
+        else
+          NonemptyAVL[A](values, ordering, newHeight, newLeft, right).rotateLeft
+      })
+    else
+      right.removeImpl(toRemove, removeOnlyOne).map((newRight: AVL[A]) => {
+        val newHeight = scala.math.max(left.height, newRight.height) + 1
+        if ((left.height - newRight.height) < 2)
+          NonemptyAVL[A](values, ordering, newHeight, left, newRight)
+        else
+          NonemptyAVL[A](values, ordering, newHeight, left, newRight).rotateRight
+      })
 
   override def toString =
     "AVL(" + values + ", " + left.toString + ", " + right.toString + ")"
