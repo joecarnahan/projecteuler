@@ -34,11 +34,10 @@
  * --------------------------------------------------------------------------
  */
 
-#include "rvg.h"
-
 #include <cmath>
 #include <cassert>
 #include <cstdlib>
+#include "rvg.h"
 
 using std::log;
 using std::sqrt;

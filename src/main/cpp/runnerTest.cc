@@ -7,10 +7,10 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-#include <iostream>
-#include <sstream>
 #include <cstdlib>
 #include <cstdio>
+#include <iostream>
+#include <sstream>
 #include "runner.h"
 #include "rng.h"
 

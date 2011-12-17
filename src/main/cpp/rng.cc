@@ -29,9 +29,9 @@
  * ------------------------------------------------------------------------- 
  */
 
-#include "rng.h"
 #include <ctime>
 #include <iostream>
+#include "rng.h"
 
 using std::time;
 using std::cout;
