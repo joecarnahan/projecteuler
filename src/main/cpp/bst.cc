@@ -52,8 +52,8 @@ namespace tree {
   }
 
   template <class T>
-  string BST<T>::getName () {
-    return "Binary search tree";
+  BST<T>::~BST() {
+    // TODO
   }
 
 }

@@ -27,6 +27,8 @@ namespace tree {
       virtual Tree   find      (const T&) = 0;
       virtual string getName   ()         = 0;
 
+      virtual ~Tree();
+
   };
 
 }

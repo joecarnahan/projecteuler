@@ -24,7 +24,7 @@ namespace run {
       // If "x" is positive, "x" is used as the seed.  If "x" is 
       // negative, uses the system time as the seed.  If "x" is
       // zero, interactively prompts the user for a seed.
-      rng(long x);
+      explicit rng(long x);
 
       // Returns a double-precision floating point number, uniformly
       // distributed between 0.0 and 1.0.

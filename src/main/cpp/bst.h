@@ -35,7 +35,10 @@ namespace tree {
       void    remove    (const T&);
       void    removeAll (const T&);
       Tree<T> find      (const T&);
-      string  getName   ();
+
+      inline string getName () { return "Binary search tree"; }
+
+      ~BST();
 
     private:
       T*   _value;

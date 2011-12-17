@@ -28,7 +28,7 @@ class rvg {
     // If "x" is positive, "x" is used as the seed.  If "x" is 
     // negative, uses the system time as the seed.  If "x" is
     // zero, interactively prompts the user for a seed.
-    rvg(long x);
+    explicit rvg(long x);
 
     // Stores the value of the current seed into the location
     // pointed to by *x.
