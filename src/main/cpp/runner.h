@@ -8,7 +8,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #if !defined( _RUNNER_JCC_ )
-#define _RUNNER_JCC_
+#define PROJECTEULER_RUNNER_H_
 
 #include <ctime>
 #include <string>
@@ -17,10 +17,10 @@ using std::string;
 
 namespace run {
 
-  typedef string (*toRun)(void);
+typedef string (*toRun)(void);
 
-  void   printAndTime(toRun, string);
-  time_t timeInSeconds(toRun);
+void   PrintAndTime(const toRun, const string);
+time_t TimeInSeconds(const toRun);
 
 }
 

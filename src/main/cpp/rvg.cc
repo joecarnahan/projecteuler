@@ -42,7 +42,7 @@
 using std::log;
 using std::sqrt;
 
-using namespace run;
+namespace run {
 
 rvg::rvg()
 /* ---------------------------------------------------------------------
@@ -50,11 +50,11 @@ rvg::rvg()
  * ---------------------------------------------------------------------   
  */
 {
-  generator = new rng();
+  generator_ = new rng();
 }
 
 
-rvg::rvg(long x)
+rvg::rvg(const long x)
 /* ---------------------------------------------------------------------
  * Seed constructor - Takes a long integer "x" as a parameter.
  * If "x" is positive, "x" is used as the seed.  If "x" is 
@@ -63,11 +63,21 @@ rvg::rvg(long x)
  * ---------------------------------------------------------------------   
  */
 {
-  generator = new rng(x);
+  generator_ = new rng(x);
 }
 
 
-void rvg::PutSeed(long x)
+rvg::~rvg()
+/* -------------------------------------------------------------------
+ * Destructor.
+ * --------------------------------------------------------------------
+ */
+{
+  delete generator_;
+}
+
+
+void rvg::PutSeed(const long x)
 /* -------------------------------------------------------------------
  * Use this (optional) procedure to initialize or reset the state of
  * the random number generator according to the following conventions:
@@ -77,71 +87,70 @@ void rvg::PutSeed(long x)
  * --------------------------------------------------------------------
  */
 {
-  assert(generator != NULL);
-  generator->PutSeed(x);
+  assert(generator_ != NULL);
+  generator_->PutSeed(x);
 }
 
 
-void rvg::GetSeed(long &x)
+long rvg::GetSeed() const
 /* --------------------------------------------------------------------
  * Use this (optional) procedure to get the current state of the random
  * number generator.                    
  * --------------------------------------------------------------------
  */
 {
-  assert(generator != NULL);
-  generator->GetSeed(x);
+  assert(generator_ != NULL);
+  return generator_->GetSeed();
 }
 
 
-long rvg::Bernoulli(double p)
+long rvg::Bernoulli(const double p)
 /* ========================================================
  * Returns 1 with probability p or 0 with probability 1 - p. 
  * NOTE: use 0.0 < p < 1.0                                   
  * ========================================================
  */ 
 {
-  assert(generator != NULL);
-  return ((generator->Random() < (1.0 - p)) ? 0 : 1);
+  assert(generator_ != NULL);
+  return ((generator_->Random() < (1.0 - p)) ? 0 : 1);
 }
 
-long rvg::Binomial(long n, double p)
+long rvg::Binomial(const long n, const double p)
 /* ================================================================ 
  * Returns a binomial distributed integer between 0 and n inclusive. 
  * NOTE: use n > 0 and 0.0 < p < 1.0
  * ================================================================
  */
 { 
-  long i, x = 0;
-
-  for (i = 0; i < n; i++)
+  long x = 0;
+  for (long i = 0; i < n; ++i)
     x += Bernoulli(p);
   return (x);
 }
 
-long rvg::Equilikely(long a, long b)
+long rvg::Equilikely(const long a, const long b)
 /* ===================================================================
  * Returns an equilikely distributed integer between a and b inclusive. 
  * NOTE: use a < b
  * ===================================================================
  */
 {
-  assert(generator != NULL);
-  return (a + (long) ((b - a + 1) * generator->Random()));
+  assert(generator_ != NULL);
+  return (a + (long) ((b - a + 1) * generator_->Random()));
 }
 
-long rvg::Geometric(double p)
+long rvg::Geometric(const double p)
 /* ====================================================
  * Returns a geometric distributed non-negative integer.
  * NOTE: use 0.0 < p < 1.0
  * ====================================================
  */
 {
-  assert(generator != NULL);
-  return ((long) (log(1.0 - generator->Random()) / log(p)));
+  assert(generator_ != NULL);
+  return ((long) (log(1.0 - generator_->Random()) / log(p)));
 }
 
-long rvg::Pascal(long n, double p)
+long rvg::Pascal(const long n, const double p)
 /* ================================================= 
  * Returns a Pascal distributed non-negative integer. 
  * NOTE: use n > 0 and 0.0 < p < 1.0
@@ -150,12 +159,12 @@ long rvg::Pascal(long n, double p)
 { 
   long i, x = 0;
 
-  for (i = 0; i < n; i++)
+  for (i = 0; i < n; ++i)
     x += Geometric(p);
   return (x);
 }
 
-long rvg::Poisson(double m)
+long rvg::Poisson(const double m)
 /* ================================================== 
  * Returns a Poisson distributed non-negative integer. 
  * NOTE: use m > 0
@@ -167,34 +176,34 @@ long rvg::Poisson(double m)
 
   while (t < m) {
     t += Exponential(1.0);
-    x++;
+    ++x;
   }
   return (x - 1);
 }
 
-double rvg::Uniform(double a, double b)
+double rvg::Uniform(const double a, const double b)
 /* =========================================================== 
  * Returns a uniformly distributed real number between a and b. 
  * NOTE: use a < b
  * ===========================================================
  */
 { 
-  assert(generator != NULL);
-  return (a + (b - a) * generator->Random());
+  assert(generator_ != NULL);
+  return (a + (b - a) * generator_->Random());
 }
 
-double rvg::Exponential(double m)
+double rvg::Exponential(const double m)
 /* =========================================================
  * Returns an exponentially distributed positive real number. 
  * NOTE: use m > 0.0
  * =========================================================
  */
 {
-  assert(generator != NULL);
-  return (-m * log(1.0 - generator->Random()));
+  assert(generator_ != NULL);
+  return (-m * log(1.0 - generator_->Random()));
 }
 
-double rvg::Erlang(long n, double b)
+double rvg::Erlang(const long n, const double b)
 /* ================================================== 
  * Returns an Erlang distributed positive real number.
  * NOTE: use n > 0 and b > 0.0
@@ -204,12 +213,12 @@ double rvg::Erlang(long n, double b)
   long   i;
   double x = 0.0;
 
-  for (i = 0; i < n; i++) 
+  for (i = 0; i < n; ++i) 
     x += Exponential(b);
   return (x);
 }
 
-double rvg::Normal(double m, double s)
+double rvg::Normal(const double m, const double s)
 /* ========================================================================
  * Returns a normal (Gaussian) distributed real number.
  * NOTE: use s > 0.0
@@ -226,8 +235,8 @@ double rvg::Normal(double m, double s)
   const double p4 = 0.453642210148e-4;  const double q4 = 0.385607006340e-2;
   double u, t, p, q, z;
 
-  assert(generator != NULL);
-  u   = generator->Random();
+  assert(generator_ != NULL);
+  u   = generator_->Random();
   if (u < 0.5)
     t = sqrt(-2.0 * log(u));
   else
@@ -241,7 +250,7 @@ double rvg::Normal(double m, double s)
   return (m + s * z);
 }
 
-double rvg::Lognormal(double a, double b)
+double rvg::Lognormal(const double a, const double b)
 /* ==================================================== 
  * Returns a lognormal distributed positive real number. 
  * NOTE: use b > 0.0
@@ -251,7 +260,7 @@ double rvg::Lognormal(double a, double b)
   return (exp(a + b * Normal(0.0, 1.0)));
 }
 
-double rvg::Chisquare(long n)
+double rvg::Chisquare(const long n)
 /* =====================================================
  * Returns a chi-square distributed positive real number. 
  * NOTE: use n > 0
@@ -261,14 +270,14 @@ double rvg::Chisquare(long n)
   long   i;
   double z, x = 0.0;
 
-  for (i = 0; i < n; i++) {
+  for (i = 0; i < n; ++i) {
     z  = Normal(0.0, 1.0);
     x += z * z;
   }
   return (x);
 }
 
-double rvg::Student(long n)
+double rvg::Student(const long n)
 /* =========================================== 
  * Returns a student-t distributed real number.
  * NOTE: use n > 0
@@ -278,3 +287,4 @@ double rvg::Student(long n)
   return (Normal(0.0, 1.0) / sqrt(Chisquare(n) / n));
 }
 
+}

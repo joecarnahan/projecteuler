@@ -20,7 +20,7 @@ using std::atoi;
 using std::sprintf;
 using std::ostringstream;
 
-using namespace run;
+namespace run {
 
 int comparator (const void * elem1, const void * elem2) {
   const double* a = static_cast<const double*>(elem1);
@@ -38,17 +38,17 @@ int count = 1000;
 string sortNumbers() {
   double* numbers = new double[count];
   rng generator(-1);
-  for (int i = 0; i < count; i++)
+  for (int i = 0; i < count; ++i)
     numbers[i] = generator.Random();
   ostringstream result;
   result << "First 10 unsorted: ";
-  for (int j = 0; (j < count) && (j < 10); j++)
-    result << numbers[j] << " ";
+  for (int i = 0; (i < count) && (i < 10); ++i)
+    result << numbers[i] << " ";
   result << endl;
   qsort(numbers, count, sizeof(double), comparator);
   result << "First 10 sorted: ";
-  for (int k = 0; (k < count) && (k < 10); k++)
-    result << numbers[k] << " ";
+  for (int i = 0; (i < count) && (i < 10); ++i)
+    result << numbers[i] << " ";
   result << endl;
   delete [] numbers;
   return result.str();
@@ -65,6 +65,7 @@ int main(int argc, char* argv[]) {
   }
   ostringstream description;
   description << "Sorting " << count << " numbers";
-  printAndTime(sortNumbers, description.str());
+  PrintAndTime(sortNumbers, description.str());
 }
 
+}

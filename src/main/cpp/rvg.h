@@ -10,7 +10,7 @@
  */
 
 #if !defined( _RVG_ )
-#define _RVG_
+#define PROJECTEULER_RVG_H_
 
 #include "rng.h"
 
@@ -18,55 +18,56 @@ namespace run {
 
 class rvg {
 
-  public:
+ public:
 
-    // Default constructor - Uses a default seed value (defined in
-    // the "rng" class).
-    rvg();
+  // Default constructor - Uses a default seed value (defined in
+  // the "rng" class).
+  rvg();
 
-    // Seed constructor - Takes a long integer "x" as a parameter.
-    // If "x" is positive, "x" is used as the seed.  If "x" is 
-    // negative, uses the system time as the seed.  If "x" is
-    // zero, interactively prompts the user for a seed.
-    explicit rvg(long x);
+  // Seed constructor - Takes a long integer "x" as a parameter.
+  // If "x" is positive, "x" is used as the seed.  If "x" is 
+  // negative, uses the system time as the seed.  If "x" is
+  // zero, interactively prompts the user for a seed.
+  explicit rvg(const long x);
 
-    // Stores the value of the current seed into the location
-    // pointed to by *x.
-    void GetSeed(long &x);
+  ~rvg();
 
-    // Sets the seed for the random number generator.  
-    // If "x" is positive, "x" is used as the seed.  If "x" is 
-    // negative, uses the system time as the seed.  If "x" is
-    // zero, interactively prompts the user for a seed.
-    void PutSeed(long x);
+  // Gets the value of the current seed.
+  long GetSeed() const;
 
-    // Discrete random variates
-    long Bernoulli(double p);
-    long Binomial(long n, double p);
-    long Equilikely(long a, long b);
-    long Geometric(double p);
-    long Pascal(long n, double p);
-    long Poisson(double m);
-  
-    // Continuous random variates
-    double Uniform(double a, double b);
-    double Exponential(double m);
-    double Erlang(long n, double b);
-    double Normal(double m, double s);
-    double Lognormal(double a, double b);
-    double Chisquare(long n);
-    double Student(long n);
+  // Sets the seed for the random number generator.  
+  // If "x" is positive, "x" is used as the seed.  If "x" is 
+  // negative, uses the system time as the seed.  If "x" is
+  // zero, interactively prompts the user for a seed.
+  void PutSeed(const long x);
 
-  private:
+  // Discrete random variates
+  long Bernoulli(const double p);
+  long Binomial(const long n, const double p);
+  long Equilikely(const long a, const long b);
+  long Geometric(const double p);
+  long Pascal(const long n, const double p);
+  long Poisson(const double m);
 
-    // The random number generator, used to support these
-    // random variates
-    rng *generator;
+  // Continuous random variates
+  double Uniform(const double a, const double b);
+  double Exponential(const double m);
+  double Erlang(const long n, const double b);
+  double Normal(const double m, const double s);
+  double Lognormal(const double a, const double b);
+  double Chisquare(const long n);
+  double Student(const long n);
 
-    // Disallow copy and assignment (what would that even mean here?)
-    rvg(const rvg&);
-    void operator=(const rvg&);
-  };
+ private:
+
+  // Disallow copy and assignment (what would that even mean here?)
+  rvg(const rvg&);
+  void operator=(const rvg&);
+
+  // The random number generator, used to support these
+  // random variates
+  rng* generator_;
+};
 
 }
 

@@ -17,19 +17,19 @@ using std::string;
 
 namespace tree {
 
-  template <class T>
-  class Tree {
+template <class T>
+class Tree {
 
-    public:
-      virtual void   add       (const T&) = 0;
-      virtual void   remove    (const T&) = 0;
-      virtual void   removeAll (const T&) = 0;
-      virtual Tree   find      (const T&) = 0;
-      virtual string getName   ()         = 0;
+ public:
+  virtual ~Tree();
 
-      virtual ~Tree();
+  virtual void   Add       (const T&) = 0;
+  virtual void   Remove    (const T&) = 0;
+  virtual void   RemoveAll (const T&) = 0;
+  virtual Tree   Find      (const T&) const = 0;
+  virtual string GetName   ()         const = 0;
 
-  };
+};
 
 }
 

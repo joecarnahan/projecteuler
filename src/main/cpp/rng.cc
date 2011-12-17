@@ -18,8 +18,8 @@
  *
  * Note that as of 7-11-90 the multiplier used in this library has changed
  * from the previous "minimal standard" 16807 to a new value of 48271.  To
- * use this library in its old (16807) form change the constants MULTIPLIER
- * and CHECK as indicated in the comments.
+ * use this library in its old (16807) form change the constants kMultiplier
+ * and kCheck as indicated in the comments.
  *
  * Name              : rng.cc
  * Author            : Joseph Carnahan <carnahan@virginia.edu>
@@ -37,7 +37,8 @@ using std::time;
 using std::cout;
 using std::cin;
 using std::endl;
-using namespace run;
+
+namespace run {
 
 rng::rng()
 /* ---------------------------------------------------------------------
@@ -45,11 +46,11 @@ rng::rng()
  * ---------------------------------------------------------------------   
  */
 {
-  seed = DEFAULT;
+  seed_ = kDefault;
 }
 
 
-rng::rng(long x)
+rng::rng(const long x)
 /* ---------------------------------------------------------------------
  * Seed constructor - Takes a long integer "x" as a parameter.
  * If "x" is positive, "x" is used as the seed.  If "x" is 
@@ -71,20 +72,18 @@ double rng::Random(void)
  * ---------------------------------------------------------------------   
  */
 {
-  const long Q = MODULUS / MULTIPLIER;
-  const long R = MODULUS % MULTIPLIER;
-        long t;
-
-  t = MULTIPLIER * (seed % Q) - R * (seed / Q);
+  const long Q = kModulus / kMultiplier;
+  const long R = kModulus % kMultiplier;
+  const long t = kMultiplier * (seed_ % Q) - R * (seed_ / Q);
   if (t > 0) 
-    seed = t;
+    seed_ = t;
   else 
-    seed = t + MODULUS;
-  return ((double) seed / MODULUS);
+    seed_ = t + kModulus;
+  return ((double) seed_ / kModulus);
 }
 
 
-void rng::PutSeed(long x)
+void rng::PutSeed(const long x)
 /* -------------------------------------------------------------------
  * Use this (optional) procedure to initialize or reset the state of
  * the random number generator according to the following conventions:
@@ -94,32 +93,33 @@ void rng::PutSeed(long x)
  * --------------------------------------------------------------------
  */
 {
-  char ok = 0;
-
-  if (x > 0L)
-    x = x % MODULUS;                          /* correct if x is too large  */
-  if (x < 0L)                                 
-    x = ((unsigned long) time((time_t *) NULL)) % MODULUS;              
-  if (x == 0L)                                
+  long seedToUse = x;
+  if (seedToUse > 0L)
+    seedToUse = seedToUse % kModulus;  /* correct if x is too large  */
+  if (seedToUse < 0L)                                 
+    seedToUse = ((unsigned long) time((time_t *) NULL)) % kModulus;              
+  if (seedToUse == 0L) {
+    bool ok = false;
     while (!ok) {
       cout << endl << "Enter a positive integer seed (9 digits or less): ";
-      cin >> x;
-      ok = (0L < x) && (x < MODULUS);
+      cin >> seedToUse;
+      ok = (0L < seedToUse) && (seedToUse < kModulus);
       if (!ok)
         cout << endl << "Input out of range ... try again" << endl;
     }
-  seed = x;
+  }
+  seed_ = seedToUse;
 }
 
 
-void rng::GetSeed(long &x)
+long rng::GetSeed() const
 /* --------------------------------------------------------------------
  * Use this (optional) procedure to get the current state of the random
  * number generator.                    
  * --------------------------------------------------------------------
  */
 {
-  x = seed;
+  return seed_;
 }
 
 
@@ -129,16 +129,13 @@ void rng::TestRandom(void)
  * -------------------------------------------------------------------    
  */
 {
-  long   i;
-  long   x;
-  double u;
-
-  PutSeed(1);                                /* set initial state to 1 */
-  for(i = 0; i < 10000; i++)
-    u = Random();
-  GetSeed(x);                               /* get the new state      */
-  if (x == CHECK) 
+  rng generator(1);
+  for(int i = 0; i < 10000; ++i)
+    generator.Random();
+  if (generator.GetSeed() == kCheck) 
     cout << endl << "The implementation of Random is correct." << endl;
   else
     cout << endl << "ERROR: The implementation of Random is not correct!" << endl;
+}
+
 }

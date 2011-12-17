@@ -15,18 +15,18 @@ using std::endl;
 
 namespace run {
 
-  void printAndTime(toRun r, string description) {
-    cout << r() << endl;
-    cout << description << " took " << timeInSeconds(r) << "s." << endl;
-  }
+void PrintAndTime(const toRun r, const string description) {
+  cout << r() << endl;
+  cout << description << " took " << TimeInSeconds(r) << "s." << endl;
+}
 
-  time_t timeInSeconds(toRun r) {
-    const int tries = 20;
-    const time_t start = time(NULL);
-    for (int i = 0; i < tries; i++) {
-      r();
-    }
-    return time(NULL) - start;
+time_t TimeInSeconds(const toRun r) {
+  const int tries = 20;
+  const time_t start = time(NULL);
+  for (int i = 0; i < tries; ++i) {
+    r();
   }
+  return time(NULL) - start;
+}
 
 }
