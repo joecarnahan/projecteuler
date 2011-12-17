@@ -5,7 +5,7 @@
  *                   Based on original C code by Steve Park & 
  *                   Dave Geyer
  * Language        : C++
- * Latest Revision : 01-30-03
+ * Latest Revision : 2011-12-16
  * -------------------------------------------------------------- 
  */
 
@@ -63,6 +63,9 @@ class rvg {
     // random variates
     rng *generator;
 
+    // Disallow copy and assignment (what would that even mean here?)
+    rvg(const rvg&);
+    void operator=(const rvg&);
   };
 
 }

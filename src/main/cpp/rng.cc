@@ -25,7 +25,7 @@
  * Author            : Joseph Carnahan <carnahan@virginia.edu>
  *                     Based on original C code by Steve Park & Dave Geyer
  * Language          : C++
- * Latest Revision   : 01-30-03
+ * Latest Revision   : 2011-12-16
  * ------------------------------------------------------------------------- 
  */
 

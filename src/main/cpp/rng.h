@@ -4,7 +4,7 @@
  * Author          : Joseph Carnahan <carnahan@virginia.edu>
  *                   Based on orginal C code by Steve Park & Dave Geyer  
  * Language        : C++
- * Latest Revision : 2011-12-14
+ * Latest Revision : 2011-12-16
  * ------------------------------------------------------------------------- 
  */
 
@@ -55,6 +55,9 @@ namespace run {
       static const long CHECK      = 399268537;
       static const long DEFAULT    = 123456789;
 
+      // Disallow copy and assignment (what would that even mean here?)
+      rng(const rng&);
+      void operator=(const rng&);
   };
   
 }

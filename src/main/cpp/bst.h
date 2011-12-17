@@ -48,6 +48,10 @@ namespace tree {
       binary_function<T, T, bool>* _equals;
 
       void removeImpl(const T&, bool);
+
+      // Disallow copying and assignment, at least until they are implemented.
+      BST(const BST&);
+      void operator=(const BST&);
   };
 
 }
