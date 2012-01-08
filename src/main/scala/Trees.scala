@@ -32,7 +32,8 @@ object Tree {
    *          the ordering to use on the elements
    * @return an empty red-black tree
    */
-  def redBlackTree[A](implicit ordering: Ordering[A]): Tree[A] = new DummyTree[A]
+  def redBlackTree[A](implicit ordering: Ordering[A]): Tree[A] = 
+    new EmptyRBT[A](ordering)
 
 }
 
@@ -115,18 +116,18 @@ private trait BST[A] extends Tree[A] {
 
 }
 
-private case class EmptyBST[A](ordering: Ordering[A]) extends BST[A] {
+/**
+ * Mixin for implementing empty trees.
+ */
+private trait EmptyTree[A] extends BST[A] {
+  override def removeImpl(toRemove: A, removeOnlyOne: Boolean) = None
+  override def minimum: Option[NonemptyList[A]] = None
+  override def toString = "Empty"
+}
 
+private case class EmptyBST[A](ordering: Ordering[A]) extends BST[A] with EmptyTree[A] {
   override def add(toAdd: A): BST[A] = 
     NonemptyBST[A](OneItem(toAdd), ordering, this, this)
-
-  override def removeImpl(toRemove: A, removeOnlyOne: Boolean): Option[BST[A]] =
-    None
-    
-  override def minimum: Option[NonemptyList[A]] = None
-
-  override def toString = "Empty"
-
 }
 
 private case class NonemptyBST[A](values: NonemptyList[A], ordering: Ordering[A], 
@@ -198,17 +199,10 @@ private trait AVL[A] extends BST[A] {
   def height: Int
 }
 
-private case class EmptyAVL[A](ordering: Ordering[A]) extends AVL[A] {
+private case class EmptyAVL[A](ordering: Ordering[A]) extends AVL[A] with EmptyTree[A] {
 
   override def add(toAdd: A): AVL[A] =
     NonemptyAVL[A](OneItem(toAdd), ordering, 1, this, this)
-
-  override def removeImpl(toRemove: A, removeOnlyOne: Boolean): Option[AVL[A]] =
-    None
-    
-  override def minimum: Option[NonemptyList[A]] = None
-
-  override def toString = "Empty"
 
   override def height = 0
 
@@ -317,12 +311,25 @@ private case class NonemptyAVL[A](values: NonemptyList[A], ordering: Ordering[A]
 
 }
 
-// TODO Remove when not needed
-class DummyTree[A] extends Tree[A] {
-  override def add(toAdd: A): Tree[A] = this
-  override def remove(toRemove: A): Option[Tree[A]] = None
-  override def removeAll(toRemove: A): Option[Tree[A]] = None
+/**
+ * Implementation o a red-black tree.
+ */
+private trait RBT[A] extends BST[A] {
+  // We specify that all operations on red-black trees produce red-black trees.
+  override def add(toAdd: A): RBT[A]
+  override def remove(toRemove: A): Option[RBT[A]] = removeImpl(toRemove, true)
+  override def removeAll(toRemove: A): Option[RBT[A]] = 
+    removeImpl(toRemove, false)
+  override def removeImpl(toRemove: A, removeOnlyOne: Boolean): Option[RBT[A]]
+
+  // TODO Do we need a color() or isBlack() method?
+} 
+
+private case class EmptyRBT[A](ordering: Ordering[A]) extends RBT[A] with EmptyTree[A] {
+  override def add(toAdd: A): RBT[A] = this // TODO Implement using NonemptyRBT
 }
+
+// TODO Implement NonemptyRBT
 
 /**
  * Code for testing tree-based data structures.
@@ -383,7 +390,7 @@ object TreeTest {
                              (reversedValues, "reverse-sorted values"))
 
     List((Tree.binarySearchTree[Int], "Binary search tree"), 
-         (Tree.avlTree[Int], "AVL tree") /*,
+         (Tree.avlTree[Int], "AVL tree") /*,  TODO Uncomment the red-black option
          (Tree.redBlackTree[Int], "Red-black tree") */).flatMap(
       _ match {
         case (tree, label1) => allValueLists.flatMap(
