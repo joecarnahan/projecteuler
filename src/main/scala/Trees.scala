@@ -322,30 +322,45 @@ private trait RBT[A] extends BST[A] {
     removeImpl(toRemove, false)
   override def removeImpl(toRemove: A, removeOnlyOne: Boolean): Option[RBT[A]]
 
-  def isBlack;
+  def isBlack: Boolean;
+  def turnRed: RBT[A];
+  def turnBlack: RBT[A];
 } 
 
 private case class EmptyRBT[A](ordering: Ordering[A]) extends RBT[A] with EmptyTree[A] {
   override def add(toAdd: A): NonemptyRBT[A] = 
     NonemptyRBT[A](OneItem(toAdd), ordering, true, this, this)
 
-  override def isBlack = true;
+  override def isBlack: Boolean = true;
+  override def turnRed: EmptyRBT[A] = sys.error("Cannot turn an empty (leaf) node red")
+  override def turnBlack: EmptyRBT[A] = this;
 }
 
 private case class NonemptyRBT[A](values: NonemptyList[A], ordering: Ordering[A],
   black: Boolean, left: RBT[A], right: RBT[A]) extends RBT[A] {
+
+  override def turnRed: NonemptyRBT[A] = 
+    NonemptyRBT[A](values, ordering, false, left, right)
+
+  override def turnBlack: NonemptyRBT[A] = 
+    NonemptyRBT[A](values, ordering, true, left, right)
 
   override def add(toAdd: A): NonemptyRBT[A] = 
     if (ordering.equiv(toAdd, values.head))
       NonemptyRBT[A](MultipleItems(toAdd, values), ordering, black, left, right)
     else if (ordering.lt(toAdd, values.head)) {
       val newLeft = left.add(toAdd)
-      // TODO Fix colors and rotation
-      this
+      left match {
+        case EmptyRBT(_) =>
+          if (black)
+            NonemptyRBT(values, ordering, black, newLeft.turnRed, right)
+          else
+            this // TODO Handle this case
+        case _ => this // TODO Handle this case
+      }
     }
     else {
-      val newRight = right.add(toAdd)
-      // TODO Fix colors and rotation
+      // TODO Mirror the behavior from the left
       this
     }
 
