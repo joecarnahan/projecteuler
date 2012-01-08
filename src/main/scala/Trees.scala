@@ -321,17 +321,33 @@ private trait RBT[A] extends BST[A] {
   override def removeAll(toRemove: A): Option[RBT[A]] = 
     removeImpl(toRemove, false)
   override def removeImpl(toRemove: A, removeOnlyOne: Boolean): Option[RBT[A]]
+
+  def isBlack;
 } 
 
 private case class EmptyRBT[A](ordering: Ordering[A]) extends RBT[A] with EmptyTree[A] {
   override def add(toAdd: A): NonemptyRBT[A] = 
     NonemptyRBT[A](OneItem(toAdd), ordering, true, this, this)
+
+  override def isBlack = true;
 }
 
 private case class NonemptyRBT[A](values: NonemptyList[A], ordering: Ordering[A],
   black: Boolean, left: RBT[A], right: RBT[A]) extends RBT[A] {
 
-  override def add(toAdd: A): NonemptyRBT[A] = this // TODO Implement
+  override def add(toAdd: A): NonemptyRBT[A] = 
+    if (ordering.equiv(toAdd, values.head))
+      NonemptyRBT[A](MultipleItems(toAdd, values), ordering, black, left, right)
+    else if (ordering.lt(toAdd, values.head)) {
+      val newLeft = left.add(toAdd)
+      // TODO Fix colors and rotation
+      this
+    }
+    else {
+      val newRight = right.add(toAdd)
+      // TODO Fix colors and rotation
+      this
+    }
 
   private def rotateLeft: NonemptyRBT[A] = this // TODO Implement
 
@@ -345,6 +361,8 @@ private case class NonemptyRBT[A](values: NonemptyList[A], ordering: Ordering[A]
 
   override def removeImpl(toRemove: A, removeOnlyOne: Boolean): Option[RBT[A]] =
     None // TODO Implement
+
+  override def isBlack = black
 
   override def toString =
     "RBT(" + values + ", " + left.toString + ", " + right.toString + ")"
