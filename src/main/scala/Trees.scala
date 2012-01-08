@@ -126,14 +126,14 @@ private trait EmptyTree[A] extends BST[A] {
 }
 
 private case class EmptyBST[A](ordering: Ordering[A]) extends BST[A] with EmptyTree[A] {
-  override def add(toAdd: A): BST[A] = 
+  override def add(toAdd: A): NonemptyBST[A] = 
     NonemptyBST[A](OneItem(toAdd), ordering, this, this)
 }
 
 private case class NonemptyBST[A](values: NonemptyList[A], ordering: Ordering[A], 
     left: BST[A], right: BST[A]) extends BST[A] {
 
-  override def add(toAdd: A): BST[A] = 
+  override def add(toAdd: A): NonemptyBST[A] = 
     if (ordering.equiv(toAdd, values.head))
       NonemptyBST[A](MultipleItems(toAdd, values), ordering, left, right)
     else if (ordering.lt(toAdd, values.head))
@@ -201,7 +201,7 @@ private trait AVL[A] extends BST[A] {
 
 private case class EmptyAVL[A](ordering: Ordering[A]) extends AVL[A] with EmptyTree[A] {
 
-  override def add(toAdd: A): AVL[A] =
+  override def add(toAdd: A): NonemptyAVL[A] =
     NonemptyAVL[A](OneItem(toAdd), ordering, 1, this, this)
 
   override def height = 0
@@ -211,7 +211,7 @@ private case class EmptyAVL[A](ordering: Ordering[A]) extends AVL[A] with EmptyT
 private case class NonemptyAVL[A](values: NonemptyList[A], ordering: Ordering[A],
   h: Int, left: AVL[A], right: AVL[A]) extends AVL[A] {
 
-  override def add(toAdd: A): AVL[A] = 
+  override def add(toAdd: A): NonemptyAVL[A] = 
     if (ordering.equiv(toAdd, values.head))
       NonemptyAVL[A](MultipleItems(toAdd, values), ordering, h, left, right)
     else if (ordering.lt(toAdd, values.head)) {
@@ -321,15 +321,35 @@ private trait RBT[A] extends BST[A] {
   override def removeAll(toRemove: A): Option[RBT[A]] = 
     removeImpl(toRemove, false)
   override def removeImpl(toRemove: A, removeOnlyOne: Boolean): Option[RBT[A]]
-
-  // TODO Do we need a color() or isBlack() method?
 } 
 
 private case class EmptyRBT[A](ordering: Ordering[A]) extends RBT[A] with EmptyTree[A] {
-  override def add(toAdd: A): RBT[A] = this // TODO Implement using NonemptyRBT
+  override def add(toAdd: A): NonemptyRBT[A] = 
+    NonemptyRBT[A](OneItem(toAdd), ordering, true, this, this)
 }
 
-// TODO Implement NonemptyRBT
+private case class NonemptyRBT[A](values: NonemptyList[A], ordering: Ordering[A],
+  black: Boolean, left: RBT[A], right: RBT[A]) extends RBT[A] {
+
+  override def add(toAdd: A): NonemptyRBT[A] = this // TODO Implement
+
+  private def rotateLeft: NonemptyRBT[A] = this // TODO Implement
+
+  private def rotateRight: NonemptyRBT[A] = this // TODO Implement
+
+  override def minimum: Option[NonemptyList[A]] =
+    left match {
+      case EmptyRBT(_) => Some(values)
+      case _ => left.minimum
+    }
+
+  override def removeImpl(toRemove: A, removeOnlyOne: Boolean): Option[RBT[A]] =
+    None // TODO Implement
+
+  override def toString =
+    "RBT(" + values + ", " + left.toString + ", " + right.toString + ")"
+
+}
 
 /**
  * Code for testing tree-based data structures.
@@ -390,8 +410,8 @@ object TreeTest {
                              (reversedValues, "reverse-sorted values"))
 
     List((Tree.binarySearchTree[Int], "Binary search tree"), 
-         (Tree.avlTree[Int], "AVL tree") /*,  TODO Uncomment the red-black option
-         (Tree.redBlackTree[Int], "Red-black tree") */).flatMap(
+         (Tree.avlTree[Int], "AVL tree"),
+         (Tree.redBlackTree[Int], "Red-black tree")).flatMap(
       _ match {
         case (tree, label1) => allValueLists.flatMap(
           _ match {
