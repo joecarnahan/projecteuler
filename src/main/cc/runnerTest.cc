@@ -61,14 +61,18 @@ int main(int argc, char* argv[]) {
   using run::PrintAndTime;
   using run::SortNumbers;
 
-  if (argc != 2) {
+  if (argc > 2) {
     cout << "Expected 1 argument, got " << (argc - 1) << endl;
-    exit(1);
+    return 1;
   }
-  int givenValue = atoi(argv[1]);
+  int givenValue = 0;
+  if (argc == 2) {
+    givenValue = atoi(argv[1]);
+  }
   if (givenValue) {
     count = givenValue;
   }
+
   ostringstream description;
   description << "Sorting " << count << " numbers";
   PrintAndTime(SortNumbers, description.str());
