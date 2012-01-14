@@ -35,7 +35,7 @@ int comparator (const void * elem1, const void * elem2) {
 // Oh noes, a global variable!
 int count = 1000;
 
-string sortNumbers() {
+string SortNumbers() {
   double* numbers = new double[count];
   rng generator(-1);
   for (int i = 0; i < count; ++i)
@@ -54,7 +54,13 @@ string sortNumbers() {
   return result.str();
 }
 
+}
+
 int main(int argc, char* argv[]) {
+  using run::count;
+  using run::PrintAndTime;
+  using run::SortNumbers;
+
   if (argc != 2) {
     cout << "Expected 1 argument, got " << (argc - 1) << endl;
     exit(1);
@@ -65,7 +71,6 @@ int main(int argc, char* argv[]) {
   }
   ostringstream description;
   description << "Sorting " << count << " numbers";
-  PrintAndTime(sortNumbers, description.str());
-}
-
+  PrintAndTime(SortNumbers, description.str());
+  return 0;
 }

@@ -20,7 +20,7 @@ namespace run {
 typedef string (*toRun)(void);
 
 void   PrintAndTime(const toRun, const string);
-time_t TimeInSeconds(const toRun);
+double TimeInSeconds(const toRun);
 
 }
 
