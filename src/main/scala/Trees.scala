@@ -71,6 +71,56 @@ trait Tree[A] {
    */
   def removeAll(toRemove: A): Option[Tree[A]]
 
+  /**
+   * Finds any violations of invariants in this tree.
+   *
+   * @return either a description of the violated invariant or None
+   */
+  def checkForViolations: Option[String]
+
+  /**
+   * Throws an exception if there are any violations of invariants in this
+   * tree.
+   *
+   * @param message
+   *          a descriptive message to precede the error message in the
+   *          exception
+   */
+  def throwIfViolationFound(message: String): Unit =
+    checkForViolations.map((errorMessage: String) =>
+      sys.error(message + ": " + errorMessage))
+
+  /**
+   * Adds the given element, checking for any violations of the tree's
+   * invariants after the addition.  If a violation is found, an exception is
+   * thrown.
+   *
+   * @param toAdd
+   *          the element to add
+   * @return the new tree with the given element added to it
+   */
+  def addAndCheck(toAdd: A): Tree[A] = {
+    val result = add(toAdd)
+    result.throwIfViolationFound("Found invariant violation after addition")
+    result
+  }
+    
+  /**
+   * Deletes the given element from the tree, checking for any violations of
+   * the tre's invariants after the removal.  If a violation is found, an
+   * exception is thrown.
+   *
+   * @param toRemove
+   *          the element to remove
+   * @return the new tree with one instance of the given element removed from
+   *         it, or None if the given element is not in the tree
+   */
+  def removeAndCheck(toRemove: A): Option[Tree[A]] =
+    remove(toRemove).map((result: Tree[A]) => {
+      result.throwIfViolationFound("Found invariant violation after removal")
+      result
+    })
+
 }
 
 /**
@@ -123,6 +173,9 @@ private trait EmptyTree[A] extends BST[A] {
   override def removeImpl(toRemove: A, removeOnlyOne: Boolean) = None
   override def minimum: Option[NonemptyList[A]] = None
   override def toString = "Empty"
+
+  // Empty trees are always valid.
+  override def checkForViolations = None
 }
 
 private case class EmptyBST[A](ordering: Ordering[A]) extends BST[A] with EmptyTree[A] {
@@ -180,6 +233,47 @@ private case class NonemptyBST[A](values: NonemptyList[A], ordering: Ordering[A]
   override def toString = 
     "BST(" + values + ", " + left.toString + ", " + right.toString + ")"
 
+  /**
+   * Verifies that every node's value is between that of its children.
+   *
+   * @return a case where a node's value doesn't fall between that of its 
+   *         children, if any
+   */
+  override def checkForViolations: Option[String] =
+    left.checkForViolations match {
+      case leftViolation: Some[_] => leftViolation
+      case _ => right.checkForViolations match {
+        case rightViolation: Some[_] => rightViolation
+        case _ => (left, right) match {
+          case (NonemptyBST(leftVals, _, _, _), 
+                NonemptyBST(rightVals, _, _, _)) =>
+            checkLeft(leftVals.head) match {
+              case leftTooBig: Some[_] => leftTooBig
+              case _ => checkRight(rightVals.head)
+            }
+          case (_, NonemptyBST(rightVals, _, _, _)) =>
+            checkRight(rightVals.head)
+          case (NonemptyBST(leftVals, _, _, _), _) =>
+            checkLeft(leftVals.head)
+          case _ => None
+        }
+      }
+    }
+
+  private def checkLeft(a: A): Option[String] =
+    if (ordering.lt(a, values.head))
+      None
+    else
+      Some("Left child value " + a.toString + " is not less than " +
+           values.head.toString)
+
+  private def checkRight(a: A): Option[String] =
+    if (ordering.gt(a, values.head))
+      None
+    else
+      Some("Right child value " + a.toString + " is not greater than " +
+           values.head.toString)
+
 }
 
 /**
@@ -197,6 +291,7 @@ private trait AVL[A] extends BST[A] {
    * Indicates the height of this node, where leaves have a height of 1.
    */
   def height: Int
+
 }
 
 private case class EmptyAVL[A](ordering: Ordering[A]) extends AVL[A] with EmptyTree[A] {
@@ -211,13 +306,15 @@ private case class EmptyAVL[A](ordering: Ordering[A]) extends AVL[A] with EmptyT
 private case class NonemptyAVL[A](values: NonemptyList[A], ordering: Ordering[A],
   h: Int, left: AVL[A], right: AVL[A]) extends AVL[A] {
 
+  private val difference = 1
+
   override def add(toAdd: A): NonemptyAVL[A] = 
     if (ordering.equiv(toAdd, values.head))
       NonemptyAVL[A](MultipleItems(toAdd, values), ordering, h, left, right)
     else if (ordering.lt(toAdd, values.head)) {
       val newLeft = left.add(toAdd)
       val newHeight = scala.math.max(newLeft.height, right.height) + 1
-      if ((newLeft.height - right.height) < 2)
+      if ((newLeft.height - right.height) <= difference)
         NonemptyAVL[A](values, ordering, newHeight, newLeft, right)
       else
         NonemptyAVL[A](values, ordering, newHeight, newLeft, right).rotateRight
@@ -225,32 +322,52 @@ private case class NonemptyAVL[A](values: NonemptyList[A], ordering: Ordering[A]
     else {
       val newRight = right.add(toAdd)
       val newHeight = scala.math.max(left.height, newRight.height) + 1
-      if ((newRight.height - left.height) < 2)
+      if ((newRight.height - left.height) <= difference)
         NonemptyAVL[A](values, ordering, newHeight, left, newRight)
       else
         NonemptyAVL[A](values, ordering, newHeight, left, newRight).rotateLeft 
     }
 
+  // TODO Rotation is busted, fix it
+
   private def rotateLeft: NonemptyAVL[A] = {
     // We should only ever call this method if the right-hand side is nonempty.
     val nonemptyRight = right.asInstanceOf[NonemptyAVL[A]]
     val leftMax = scala.math.max(left.height, nonemptyRight.left.height)
-    NonemptyAVL[A](nonemptyRight.values, ordering,
+    // debug TODO remove
+    //NonemptyAVL[A](nonemptyRight.values, ordering,
+     //              scala.math.max(leftMax + 1, nonemptyRight.right.height) + 1,
+      //             NonemptyAVL[A](values, ordering, leftMax + 1,
+       //                           left, nonemptyRight.left),
+        //           nonemptyRight.right)
+    val result = NonemptyAVL[A](nonemptyRight.values, ordering,
                    scala.math.max(leftMax + 1, nonemptyRight.right.height) + 1,
                    NonemptyAVL[A](values, ordering, leftMax + 1,
                                   left, nonemptyRight.left),
                    nonemptyRight.right)
+    println("Rotated left, changing " + toString + " to " + result.toString)
+    result
+    // enddebug TODO
   }
 
   private def rotateRight: NonemptyAVL[A] = {
     // We should only ever call this method if the left-hand side is nonempty.
     val nonemptyLeft = left.asInstanceOf[NonemptyAVL[A]]
     val rightMax = scala.math.max(right.height, nonemptyLeft.right.height)
-    NonemptyAVL[A](nonemptyLeft.values, ordering,
+    // debug TODO remove
+    //NonemptyAVL[A](nonemptyLeft.values, ordering,
+     //              scala.math.max(rightMax + 1, nonemptyLeft.left.height) + 1,
+      //             nonemptyLeft.left,
+       //            NonemptyAVL[A](values, ordering, rightMax + 1,
+        //                          nonemptyLeft.right, right))
+    val result = NonemptyAVL[A](nonemptyLeft.values, ordering,
                    scala.math.max(rightMax + 1, nonemptyLeft.left.height) + 1,
                    nonemptyLeft.left,
                    NonemptyAVL[A](values, ordering, rightMax + 1,
                                   nonemptyLeft.right, right))
+    println("Rotated right, changing " + toString + " to " + result.toString)
+    result
+    // enddebug TODO
   }
 
   override def minimum: Option[NonemptyList[A]] =
@@ -279,7 +396,7 @@ private case class NonemptyAVL[A](values: NonemptyList[A], ordering: Ordering[A]
                     val newRight = right.removeAll(successor.head).get
                     val newHeight = scala.math.max(left.height, 
                                                    newRight.height) + 1
-                    if ((left.height - newRight.height) < 2)
+                    if ((left.height - newRight.height) <= difference)
                       NonemptyAVL[A](successor, ordering, newHeight, left, newRight)
                     else
                       NonemptyAVL[A](successor, ordering, newHeight, left, newRight).rotateRight
@@ -290,7 +407,7 @@ private case class NonemptyAVL[A](values: NonemptyList[A], ordering: Ordering[A]
     else if (ordering.lt(toRemove, values.head))
       left.removeImpl(toRemove, removeOnlyOne).map((newLeft: AVL[A]) => {
         val newHeight = scala.math.max(newLeft.height, right.height) + 1
-        if ((right.height - newLeft.height) < 2)
+        if ((right.height - newLeft.height) <= difference)
           NonemptyAVL[A](values, ordering, newHeight, newLeft, right)
         else
           NonemptyAVL[A](values, ordering, newHeight, newLeft, right).rotateLeft
@@ -298,7 +415,7 @@ private case class NonemptyAVL[A](values: NonemptyList[A], ordering: Ordering[A]
     else
       right.removeImpl(toRemove, removeOnlyOne).map((newRight: AVL[A]) => {
         val newHeight = scala.math.max(left.height, newRight.height) + 1
-        if ((left.height - newRight.height) < 2)
+        if ((left.height - newRight.height) <= difference)
           NonemptyAVL[A](values, ordering, newHeight, left, newRight)
         else
           NonemptyAVL[A](values, ordering, newHeight, left, newRight).rotateRight
@@ -308,6 +425,54 @@ private case class NonemptyAVL[A](values: NonemptyList[A], ordering: Ordering[A]
     "AVL(" + values + ", " + left.toString + ", " + right.toString + ")"
 
   override def height = h
+
+  /**
+   * Verifies that every node's value is between that of its children and that
+   * the height of the children does not differ by more than 1.
+   *
+   * @return a case where a node's value doesn't fall between that of its 
+   *         children or where the heights of the children differ too much, if
+   *         any
+   */
+  override def checkForViolations: Option[String] =
+    if (scala.math.abs(left.height - right.height) > difference)
+      Some("Height of left child (" + left.height + 
+           ") differs from height of right child (" + right.height + 
+           ") by more than " + difference)
+    else
+      left.checkForViolations match {
+        case leftViolation: Some[_] => leftViolation
+        case _ => right.checkForViolations match {
+          case rightViolation: Some[_] => rightViolation
+          case _ => (left, right) match {
+            case (NonemptyAVL(leftVals, _, _, _, _), 
+                  NonemptyAVL(rightVals, _, _, _, _)) =>
+              checkLeft(leftVals.head) match {
+                case leftTooBig: Some[_] => leftTooBig
+                case _ => checkRight(rightVals.head)
+              }
+            case (_, NonemptyAVL(rightVals, _, _, _, _)) =>
+              checkRight(rightVals.head)
+            case (NonemptyAVL(leftVals, _, _, _, _), _) =>
+              checkLeft(leftVals.head)
+            case _ => None
+          }
+        }
+      }
+
+  private def checkLeft(a: A): Option[String] =
+    if (ordering.lt(a, values.head))
+      None
+    else
+      Some("Left child value " + a.toString + " is not less than " +
+           values.head.toString)
+
+  private def checkRight(a: A): Option[String] =
+    if (ordering.gt(a, values.head))
+      None
+    else
+      Some("Right child value " + a.toString + " is not greater than " +
+           values.head.toString)
 
 }
 
@@ -325,6 +490,7 @@ private trait RBT[A] extends BST[A] {
   def isBlack: Boolean;
   def turnRed: RBT[A];
   def turnBlack: RBT[A];
+
 } 
 
 private case class EmptyRBT[A](ordering: Ordering[A]) extends RBT[A] with EmptyTree[A] {
@@ -382,6 +548,19 @@ private case class NonemptyRBT[A](values: NonemptyList[A], ordering: Ordering[A]
   override def toString =
     "RBT(" + values + ", " + left.toString + ", " + right.toString + ")"
 
+  /**
+   * Verifies that all of the properties of red-black trees hold for this
+   * tree.  The properties of red-black trees are:
+   * <ol>
+   *   <li>TODO</li>
+   * </ol>
+   *
+   * @return a case where a node's value doesn't fall between that of its 
+   *         children or where the heights of the children differ too much, if
+   *         any
+   */
+  override def checkForViolations: Option[String] = sys.error("todo") // TODO
+
 }
 
 /**
@@ -404,11 +583,9 @@ object TreeTest {
    */
   def testTree[A](tree: Tree[A], toAdd: Seq[A], toRemove: Seq[A]): String = {
     val withAdditions: Tree[A] = toAdd.foldLeft(tree)(_ add _)
-    toRemove.foldLeft(withAdditions)((t: Tree[A], a: A) => t.remove(a) match {
-      case Some(result) =>
-        result
-      case None => sys.error("Was unable to find " + a.toString + " in " + t.toString)
-    })
+    toRemove.foldLeft(withAdditions)((t: Tree[A], a: A) => 
+      t.remove(a).getOrElse(
+        sys.error("Was unable to find " + a.toString + " in " + t.toString)))
     if ((toAdd.size > 20) || (toRemove.size > 20))
       "Added " + toAdd.size.toString + " and removed " + 
         toRemove.size.toString + " elements"
@@ -443,8 +620,8 @@ object TreeTest {
                              (reversedValues, "reverse-sorted values"))
 
     List((Tree.binarySearchTree[Int], "Binary search tree"), 
-         (Tree.avlTree[Int], "AVL tree"),
-         (Tree.redBlackTree[Int], "Red-black tree")).flatMap(
+         (Tree.avlTree[Int], "AVL tree")/* , TODO Uncomment RBT
+         (Tree.redBlackTree[Int], "Red-black tree") */).flatMap(
       _ match {
         case (tree, label1) => allValueLists.flatMap(
           _ match {

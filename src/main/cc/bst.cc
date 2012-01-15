@@ -22,7 +22,7 @@ BST<T>::BST() {
 // than" and "equals".
 template <class T>
 BST<T>::BST(const binary_function<T, T, bool>* lessThan, 
-         const binary_function<T, T, bool>* equals) {
+            const binary_function<T, T, bool>* equals) {
   // TODO
 }
 

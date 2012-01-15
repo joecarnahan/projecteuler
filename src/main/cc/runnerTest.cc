@@ -22,7 +22,7 @@ using std::ostringstream;
 
 namespace run {
 
-int comparator (const void * elem1, const void * elem2) {
+int DoubleComparator (const void * elem1, const void * elem2) {
   const double* a = static_cast<const double*>(elem1);
   const double* b = static_cast<const double*>(elem2);
   if (*a < *b)
@@ -45,7 +45,7 @@ string SortNumbers() {
   for (int i = 0; (i < count) && (i < 10); ++i)
     result << numbers[i] << " ";
   result << endl;
-  qsort(numbers, count, sizeof(double), comparator);
+  qsort(numbers, count, sizeof(double), DoubleComparator);
   result << "First 10 sorted: ";
   for (int i = 0; (i < count) && (i < 10); ++i)
     result << numbers[i] << " ";
