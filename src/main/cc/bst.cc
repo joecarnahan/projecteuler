@@ -47,7 +47,7 @@ void BST<T>::RemoveAll (const T& toRemove) {
 }
 
 template <class T>
-void RemoveImpl(const T& toRemove, const bool removeAll) {
+void BST<T>::RemoveImpl(const T& toRemove, const bool removeAll) {
   // TODO
 }
 
