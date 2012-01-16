@@ -142,6 +142,26 @@ private case class MultipleItems[A](h: A, r: NonemptyList[A])
   override def toString = h.toString + "," + r.toString
 }
 
+private object BST {
+
+  // Common code for consistency checking within binary search trees:
+
+  def checkLeft[A](value: A, left: A, ordering: Ordering[A]): Option[String] =
+    if (ordering.lt(left, value))
+      None
+    else
+      Some("Left child value " + left.toString + " is not less than " +
+           value.toString)
+
+  def checkRight[A](value: A, right: A, ordering: Ordering[A]): Option[String] =
+    if (ordering.gt(right, value))
+      None
+    else
+      Some("Right child value " + right.toString + " is not greater than " +
+           value.toString)
+
+}
+
 /**
  * Implementation of a binary search tree, in which every parent node's value
  * is greater than or equal to that of its left child (if any) and less than or
@@ -247,32 +267,18 @@ private case class NonemptyBST[A](values: NonemptyList[A], ordering: Ordering[A]
         case _ => (left, right) match {
           case (NonemptyBST(leftVals, _, _, _), 
                 NonemptyBST(rightVals, _, _, _)) =>
-            checkLeft(leftVals.head) match {
+            BST.checkLeft(values.head, leftVals.head, ordering) match {
               case leftTooBig: Some[_] => leftTooBig
-              case _ => checkRight(rightVals.head)
+              case _ => BST.checkRight(values.head, rightVals.head, ordering)
             }
           case (_, NonemptyBST(rightVals, _, _, _)) =>
-            checkRight(rightVals.head)
+            BST.checkRight(values.head, rightVals.head, ordering)
           case (NonemptyBST(leftVals, _, _, _), _) =>
-            checkLeft(leftVals.head)
+            BST.checkLeft(values.head, leftVals.head, ordering)
           case _ => None
         }
       }
     }
-
-  private def checkLeft(a: A): Option[String] =
-    if (ordering.lt(a, values.head))
-      None
-    else
-      Some("Left child value " + a.toString + " is not less than " +
-           values.head.toString)
-
-  private def checkRight(a: A): Option[String] =
-    if (ordering.gt(a, values.head))
-      None
-    else
-      Some("Right child value " + a.toString + " is not greater than " +
-           values.head.toString)
 
 }
 
@@ -455,32 +461,18 @@ private case class NonemptyAVL[A](values: NonemptyList[A], ordering: Ordering[A]
           case _ => (left, right) match {
             case (NonemptyAVL(leftVals, _, _, _, _), 
                   NonemptyAVL(rightVals, _, _, _, _)) =>
-              checkLeft(leftVals.head) match {
+              BST.checkLeft(values.head, leftVals.head, ordering) match {
                 case leftTooBig: Some[_] => leftTooBig
-                case _ => checkRight(rightVals.head)
+                case _ => BST.checkRight(values.head, rightVals.head, ordering)
               }
             case (_, NonemptyAVL(rightVals, _, _, _, _)) =>
-              checkRight(rightVals.head)
+              BST.checkRight(values.head, rightVals.head, ordering)
             case (NonemptyAVL(leftVals, _, _, _, _), _) =>
-              checkLeft(leftVals.head)
+              BST.checkLeft(values.head, leftVals.head, ordering)
             case _ => None
           }
         }
       }
-
-  private def checkLeft(a: A): Option[String] =
-    if (ordering.lt(a, values.head))
-      None
-    else
-      Some("Left child value " + a.toString + " is not less than " +
-           values.head.toString)
-
-  private def checkRight(a: A): Option[String] =
-    if (ordering.gt(a, values.head))
-      None
-    else
-      Some("Right child value " + a.toString + " is not greater than " +
-           values.head.toString)
 
 }
 
@@ -495,9 +487,16 @@ private trait RBT[A] extends BST[A] {
     removeImpl(toRemove, false)
   override def removeImpl(toRemove: A, removeOnlyOne: Boolean): Option[RBT[A]]
 
-  def isBlack: Boolean;
-  def turnRed: RBT[A];
-  def turnBlack: RBT[A];
+  def isBlack: Boolean
+  def isRed: Boolean = !isBlack
+  def turnRed: RBT[A]
+  def turnBlack: RBT[A]
+
+  /**
+   * This function checks to make sure that the number of black nodes is the same on
+   * every simple path from this node to its leaves.
+   */
+  def checkBlackNodeCounts: Either[String, Int]
 
 } 
 
@@ -505,9 +504,10 @@ private case class EmptyRBT[A](ordering: Ordering[A]) extends RBT[A] with EmptyT
   override def add(toAdd: A): NonemptyRBT[A] = 
     NonemptyRBT[A](OneItem(toAdd), ordering, true, this, this)
 
-  override def isBlack: Boolean = true;
+  override def isBlack: Boolean = true
   override def turnRed: EmptyRBT[A] = sys.error("Cannot turn an empty (leaf) node red")
-  override def turnBlack: EmptyRBT[A] = this;
+  override def turnBlack: EmptyRBT[A] = this
+  override def checkBlackNodeCounts: Either[String, Int] = Right(1)
 }
 
 private case class NonemptyRBT[A](values: NonemptyList[A], ordering: Ordering[A],
@@ -558,16 +558,75 @@ private case class NonemptyRBT[A](values: NonemptyList[A], ordering: Ordering[A]
 
   /**
    * Verifies that all of the properties of red-black trees hold for this
-   * tree.  The properties of red-black trees are:
+   * tree.  The relevant properties of red-black trees are:
    * <ol>
-   *   <li>TODO</li>
+   *   <li>They are binary search trees, meaning that all nodes' values are
+   *       greater than the values of their left children (if any) and less than
+   *       the values of their right children (if any).</li>
+   *   <li>Both children of every red node are black.</li>
+   *   <li>Every simple path from a given node to any of its descendant leaves
+   *       contains the same number of black nodes.</li>
    * </ol>
+   * Note that we don't need to explicitly check that leaves are black, because
+   * empty nodes are black.
+   * <p>
+   * Also, note that we can't directly check if the root is black here in this
+   * method, because this method doesn't assume that the given node is the root.
    *
    * @return a case where a node's value doesn't fall between that of its 
    *         children or where the heights of the children differ too much, if
    *         any
    */
-  override def checkForViolations: Option[String] = sys.error("todo") // TODO
+  override def checkForViolations: Option[String] =
+    if (isRed && left.isRed)
+      Some("Red node " + values.head.toString + " has a red left child " +
+           left.toString)
+    else if(isRed && right.isRed)
+      Some("Red node " + values.head.toString + " has a red right child " +
+           right.toString)
+    else
+      checkBlackNodeCounts.fold(failure => Some(failure), success =>
+        left.checkForViolations match {
+          case leftViolation: Some[_] => leftViolation
+          case _ => right.checkForViolations match {
+            case rightViolation: Some[_] => rightViolation
+            case _ => (left, right) match {
+              case (NonemptyRBT(leftVals, _, _, _, _), 
+                    NonemptyRBT(rightVals, _, _, _, _)) =>
+                BST.checkLeft(values.head, leftVals.head, ordering) match {
+                  case leftTooBig: Some[_] => leftTooBig
+                  case _ => BST.checkRight(values.head, rightVals.head, ordering)
+                }
+              case (_, NonemptyRBT(rightVals, _, _, _, _)) =>
+                BST.checkRight(values.head, rightVals.head, ordering)
+              case (NonemptyRBT(leftVals, _, _, _, _), _) =>
+                BST.checkLeft(values.head, leftVals.head, ordering)
+              case _ => None
+            }
+          }
+        }
+      )
+
+  // The implementation of this method is hella confusing just because both the
+  // tree and the Either structure have their own meanings for "left" and 
+  // "right". D'oh. - JCC 2012-01-16
+  override def checkBlackNodeCounts: Either[String, Int] =
+    left.checkBlackNodeCounts.fold(
+      leftFailure => Left(leftFailure),
+      leftCount => right.checkBlackNodeCounts.fold(
+        rightFailure => Left(rightFailure),
+        rightCount =>
+          if (leftCount == rightCount)
+            if (black)
+              Right(leftCount + 1)
+            else
+              Right(leftCount)
+          else
+            Left("This node is " + leftCount + " black nodes away from its " +
+                 "leaves on the left and " + rightCount + " black nodes away " +
+                 "from its leaves on the right")
+      )
+    )
 
 }
 
@@ -636,6 +695,7 @@ object TreeTest {
             case (addVals, label2) => allValueLists.map(
               _ match {
                 case(removeVals, label3) =>
+                  // TODO Change this to only check the values once
                   Runner.printAndTime(() => 
                     testTree(tree, addVals, removeVals).toString, 
                     label1 + ": " + label2 + " added, " + label3 + " removed")
