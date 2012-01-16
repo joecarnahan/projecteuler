@@ -700,13 +700,21 @@ object TreeTest {
           _ match {
             case (addVals, label2) => allValueLists.map(
               _ match {
-                case(removeVals, label3) =>
-                  // TODO Change this to only check the values once
-                  Runner.printAndTime(() => 
+                case(removeVals, label3) => {
+                  // Note that we print out the results from the add-and-check
+                  // and remove-and-check methods, but we turn off constraint
+                  // checking for the performance timing. - JCC 2012-01-16
+                  println(testTree(tree, addVals, removeVals,
+                                   { (t: Tree[Int], a: Int) => 
+                                       t.addAndCheck(a) },
+                                   { (t: Tree[Int], a: Int) => 
+                                       t.removeAndCheck(a) }))
+                  Runner.printTime(() => 
                     testTree(tree, addVals, removeVals,
                              { (t: Tree[Int], a: Int) => t.add(a) },
-                             { (t: Tree[Int], a: Int) => t.remove(a) }).toString, 
+                             { (t: Tree[Int], a: Int) => t.remove(a) }),
                     label1 + ": " + label2 + " added, " + label3 + " removed")
+                }
               })
           })
       })
