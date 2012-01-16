@@ -44,7 +44,7 @@ int IntComparator (const void * elem1, const void * elem2) {
 // Fills in the second array with a sorted copy of the first array.
 void FillSorted(int* toSort, int* sortedCopy, int size) {
   std::memcpy(sortedCopy, toSort, size * sizeof(int));
-  std::qsort(sortedCopy, sizeof(int), size, IntComparator);
+  std::qsort(sortedCopy, size, sizeof(int), IntComparator);
 }
 
 // Fills in the second array with a reversed copy of the 
