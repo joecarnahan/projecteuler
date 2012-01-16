@@ -4,7 +4,8 @@ Obviously, you can look at these if you're working on Project Euler.  But
 seriously, what would be the point of doing the project if not to figure the
 solutions out for yourself?
 
-*Edit:* So, I've started throwing other "oh, I should implement one of those
-in Scala" projects into here, like various algorithms and data structures.
-Eventually, I should pull those out into their own project, but for now, they
-can live here.
+*Edit:* This has become my miscellaneous bit bucket for personal programming
+homework problems.  So, you'll find that I've gone and implemented a couple
+types of trees in Scala and also started on C++ versions as well.  Eventually,
+I should organize this stuff into different projects, but for now, it can all
+live here.
