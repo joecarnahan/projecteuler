@@ -646,12 +646,18 @@ object TreeTest {
    *          the values to add
    * @param toRemove
    *          the values to remove
+   * @param add
+   *          the addition function to use
+   * @param remove
+   *          the removal function to use
    * @return a string describing the tree that was tested
    */
-  def testTree[A](tree: Tree[A], toAdd: Seq[A], toRemove: Seq[A]): String = {
-    val withAdditions: Tree[A] = toAdd.foldLeft(tree)(_ addAndCheck _)
+  def testTree[A](tree: Tree[A], toAdd: Seq[A], toRemove: Seq[A],
+                  add: (Tree[A], A) => Tree[A], 
+                  remove: (Tree[A], A) => Option[Tree[A]]): String = {
+    val withAdditions: Tree[A] = toAdd.foldLeft(tree)(add(_, _))
     toRemove.foldLeft(withAdditions)((t: Tree[A], a: A) => 
-      t.removeAndCheck(a).getOrElse(
+      remove(t, a).getOrElse(
         sys.error("Was unable to find " + a.toString + " in " + t.toString)))
     if ((toAdd.size > 20) || (toRemove.size > 20))
       "Added " + toAdd.size.toString + " and removed " + 
@@ -697,7 +703,9 @@ object TreeTest {
                 case(removeVals, label3) =>
                   // TODO Change this to only check the values once
                   Runner.printAndTime(() => 
-                    testTree(tree, addVals, removeVals).toString, 
+                    testTree(tree, addVals, removeVals,
+                             { (t: Tree[Int], a: Int) => t.add(a) },
+                             { (t: Tree[Int], a: Int) => t.remove(a) }).toString, 
                     label1 + ": " + label2 + " added, " + label3 + " removed")
               })
           })
