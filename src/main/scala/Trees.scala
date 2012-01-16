@@ -292,6 +292,22 @@ private trait AVL[A] extends BST[A] {
    */
   def height: Int
 
+  /**
+   * Indicates the difference between the height of the left and right children of
+   * a node.
+   */
+  def balanceFactor: Int
+
+  /**
+   * Rotates the tree to the left at the root.
+   */
+  def rotateLeft: AVL[A]
+
+  /**
+   * Rotates the tree to the right at the root.
+   */
+  def rotateRight: AVL[A]
+
 }
 
 private case class EmptyAVL[A](ordering: Ordering[A]) extends AVL[A] with EmptyTree[A] {
@@ -300,6 +316,9 @@ private case class EmptyAVL[A](ordering: Ordering[A]) extends AVL[A] with EmptyT
     NonemptyAVL[A](OneItem(toAdd), ordering, 1, this, this)
 
   override def height = 0
+  override def balanceFactor = 0
+  override def rotateLeft = sys.error("Should not need to rotate an empty tree")
+  override def rotateRight = sys.error("Should not need to rotate an empty tree")
 
 }
 
@@ -308,66 +327,64 @@ private case class NonemptyAVL[A](values: NonemptyList[A], ordering: Ordering[A]
 
   private val difference = 1
 
+  override def balanceFactor = left.height - right.height
+
+  def rebalance: NonemptyAVL[A] = 
+    if (balanceFactor < (-difference))
+      if ((right.balanceFactor == -1) || (right.balanceFactor == 0))
+        rotateLeft
+      else if (right.balanceFactor == 1)
+        NonemptyAVL[A](values, ordering, h, left, right.rotateRight).rotateLeft
+      else
+        sys.error("Right child has balance factor of " + right.balanceFactor +
+                  ", value of -1, 0, or 1 was expected. This tree:" + 
+                  System.getProperty("line.separator") + toString)
+    else if (balanceFactor > difference)
+      if ((left.balanceFactor == 1) || (left.balanceFactor == 0))
+        rotateRight
+      else if (left.balanceFactor == -1)
+        NonemptyAVL[A](values, ordering, h, left.rotateLeft, right).rotateRight
+      else
+        sys.error("Left child has balance factor of " + right.balanceFactor +
+                  ", value of -1, 0, or 1 was expected. This tree:" +
+                  System.getProperty("line.separator") + toString)
+    else
+      this
+
   override def add(toAdd: A): NonemptyAVL[A] = 
     if (ordering.equiv(toAdd, values.head))
       NonemptyAVL[A](MultipleItems(toAdd, values), ordering, h, left, right)
     else if (ordering.lt(toAdd, values.head)) {
       val newLeft = left.add(toAdd)
       val newHeight = scala.math.max(newLeft.height, right.height) + 1
-      if ((newLeft.height - right.height) <= difference)
-        NonemptyAVL[A](values, ordering, newHeight, newLeft, right)
-      else
-        NonemptyAVL[A](values, ordering, newHeight, newLeft, right).rotateRight
+      NonemptyAVL[A](values, ordering, newHeight, newLeft, right).rebalance
     }
     else {
       val newRight = right.add(toAdd)
       val newHeight = scala.math.max(left.height, newRight.height) + 1
-      if ((newRight.height - left.height) <= difference)
-        NonemptyAVL[A](values, ordering, newHeight, left, newRight)
-      else
-        NonemptyAVL[A](values, ordering, newHeight, left, newRight).rotateLeft 
+      NonemptyAVL[A](values, ordering, newHeight, left, newRight).rebalance
     }
 
-  // TODO Rotation is busted, fix it
-
-  private def rotateLeft: NonemptyAVL[A] = {
+  override def rotateLeft: NonemptyAVL[A] = {
     // We should only ever call this method if the right-hand side is nonempty.
     val nonemptyRight = right.asInstanceOf[NonemptyAVL[A]]
     val leftMax = scala.math.max(left.height, nonemptyRight.left.height)
-    // debug TODO remove
-    //NonemptyAVL[A](nonemptyRight.values, ordering,
-     //              scala.math.max(leftMax + 1, nonemptyRight.right.height) + 1,
-      //             NonemptyAVL[A](values, ordering, leftMax + 1,
-       //                           left, nonemptyRight.left),
-        //           nonemptyRight.right)
-    val result = NonemptyAVL[A](nonemptyRight.values, ordering,
+    NonemptyAVL[A](nonemptyRight.values, ordering,
                    scala.math.max(leftMax + 1, nonemptyRight.right.height) + 1,
                    NonemptyAVL[A](values, ordering, leftMax + 1,
                                   left, nonemptyRight.left),
                    nonemptyRight.right)
-    println("Rotated left, changing " + toString + " to " + result.toString)
-    result
-    // enddebug TODO
   }
 
-  private def rotateRight: NonemptyAVL[A] = {
+  override def rotateRight: NonemptyAVL[A] = {
     // We should only ever call this method if the left-hand side is nonempty.
     val nonemptyLeft = left.asInstanceOf[NonemptyAVL[A]]
     val rightMax = scala.math.max(right.height, nonemptyLeft.right.height)
-    // debug TODO remove
-    //NonemptyAVL[A](nonemptyLeft.values, ordering,
-     //              scala.math.max(rightMax + 1, nonemptyLeft.left.height) + 1,
-      //             nonemptyLeft.left,
-       //            NonemptyAVL[A](values, ordering, rightMax + 1,
-        //                          nonemptyLeft.right, right))
-    val result = NonemptyAVL[A](nonemptyLeft.values, ordering,
+    NonemptyAVL[A](nonemptyLeft.values, ordering,
                    scala.math.max(rightMax + 1, nonemptyLeft.left.height) + 1,
                    nonemptyLeft.left,
                    NonemptyAVL[A](values, ordering, rightMax + 1,
                                   nonemptyLeft.right, right))
-    println("Rotated right, changing " + toString + " to " + result.toString)
-    result
-    // enddebug TODO
   }
 
   override def minimum: Option[NonemptyList[A]] =
@@ -396,10 +413,7 @@ private case class NonemptyAVL[A](values: NonemptyList[A], ordering: Ordering[A]
                     val newRight = right.removeAll(successor.head).get
                     val newHeight = scala.math.max(left.height, 
                                                    newRight.height) + 1
-                    if ((left.height - newRight.height) <= difference)
-                      NonemptyAVL[A](successor, ordering, newHeight, left, newRight)
-                    else
-                      NonemptyAVL[A](successor, ordering, newHeight, left, newRight).rotateRight
+                    NonemptyAVL[A](successor, ordering, newHeight, left, newRight).rebalance
                   })
               }
           }
@@ -407,18 +421,12 @@ private case class NonemptyAVL[A](values: NonemptyList[A], ordering: Ordering[A]
     else if (ordering.lt(toRemove, values.head))
       left.removeImpl(toRemove, removeOnlyOne).map((newLeft: AVL[A]) => {
         val newHeight = scala.math.max(newLeft.height, right.height) + 1
-        if ((right.height - newLeft.height) <= difference)
-          NonemptyAVL[A](values, ordering, newHeight, newLeft, right)
-        else
-          NonemptyAVL[A](values, ordering, newHeight, newLeft, right).rotateLeft
+        NonemptyAVL[A](values, ordering, newHeight, newLeft, right).rebalance
       })
     else
       right.removeImpl(toRemove, removeOnlyOne).map((newRight: AVL[A]) => {
         val newHeight = scala.math.max(left.height, newRight.height) + 1
-        if ((left.height - newRight.height) <= difference)
-          NonemptyAVL[A](values, ordering, newHeight, left, newRight)
-        else
-          NonemptyAVL[A](values, ordering, newHeight, left, newRight).rotateRight
+        NonemptyAVL[A](values, ordering, newHeight, left, newRight).rebalance
       })
 
   override def toString =
@@ -582,9 +590,9 @@ object TreeTest {
    * @return a string describing the tree that was tested
    */
   def testTree[A](tree: Tree[A], toAdd: Seq[A], toRemove: Seq[A]): String = {
-    val withAdditions: Tree[A] = toAdd.foldLeft(tree)(_ add _)
+    val withAdditions: Tree[A] = toAdd.foldLeft(tree)(_ addAndCheck _)
     toRemove.foldLeft(withAdditions)((t: Tree[A], a: A) => 
-      t.remove(a).getOrElse(
+      t.removeAndCheck(a).getOrElse(
         sys.error("Was unable to find " + a.toString + " in " + t.toString)))
     if ((toAdd.size > 20) || (toRemove.size > 20))
       "Added " + toAdd.size.toString + " and removed " + 
