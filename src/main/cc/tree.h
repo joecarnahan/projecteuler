@@ -21,13 +21,13 @@ template <class T>
 class Tree {
 
  public:
-  virtual ~Tree();
+  virtual ~Tree() { };
 
-  virtual void   Add       (const T&) = 0;
-  virtual void   Remove    (const T&) = 0;
-  virtual void   RemoveAll (const T&) = 0;
-  virtual Tree   Find      (const T&) const = 0;
-  virtual string GetName   ()         const = 0;
+  virtual void     Add       (const T&) = 0;
+  virtual void     Remove    (const T&) = 0;
+  virtual void     RemoveAll (const T&) = 0;
+  virtual Tree<T>* Find      (const T&) const = 0;
+  virtual string   GetName   ()         const = 0;
 
 };
 

@@ -33,10 +33,10 @@ class BST : public Tree<T> {
 
   ~BST();
 
-  void    Add       (const T&);
-  void    Remove    (const T&);
-  void    RemoveAll (const T&);
-  Tree<T> Find      (const T&) const;
+  void     Add       (const T&);
+  void     Remove    (const T&);
+  void     RemoveAll (const T&);
+  Tree<T>* Find      (const T&) const;
 
   inline string GetName () const { return "Binary search tree"; }
 
