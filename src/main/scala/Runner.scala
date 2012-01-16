@@ -65,6 +65,19 @@ object Runner {
    */
   def printAndTime(codeToRun: () => String, description: String) = {
     println(codeToRun())
+    printTime(codeToRun, description)
+  }
+
+  /**
+   * Prints out the average running time of the given code.
+   *
+   * @param codeToRun
+   *          The code to run
+   * @param description
+   *          The name to use for this code when reporting its average
+   *          running time.
+   */
+  def printTime(codeToRun: () => String, description: String) = {
     println(description + " took " + 
             timeInMilliseconds(codeToRun) + "ms.")
   }
