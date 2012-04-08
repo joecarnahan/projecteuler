@@ -9,7 +9,7 @@ object _013 {
   /**
    * The default number of digits of the sum to create.
    */
-  val defaultDigits = 10L
+  val defaultDigits = 1L
 
   /**
    * The default numbers to process, stored as strings.
@@ -135,12 +135,13 @@ object _013 {
   def checkLengths(strings: Traversable[String]): Long =
     strings.foldLeft(noStringsGiven)((length: Long, next: String) => {
       if (length == noStringsGiven)
-        next.size
-      else if (length != next.size)
+        next.length
+      else if (length != next.length)
         sys.error("Not all of the strings are the same length")
       else
         length
     })
+
 
   /**
    * Given a collection of numbers that all have the same number of digits,
@@ -156,8 +157,24 @@ object _013 {
     val length = checkLengths(toSum)
     assert(length >= n)
     toSum.map {(s: String) => assert(s.matches("^\\d+$"))}
-    // TODO Implement
-    0
+    def getFirstDigit: String => Long = {
+      (s: String) => java.lang.Character.digit(s.charAt(0), 10)
+    }
+    def findFirstDigitsOfSumRec(sumSoFar: Long, digitsSoFar: Long,
+                                remainingToSum: Traversable[String]): Long = { // DEBUG
+      println(sumSoFar + "," + digitsSoFar + "," + remainingToSum.head) // DEBUG
+      //if ((remainingToSum.head.length == 0) ||
+      //    (digitsSoFar > (n + 1)))
+      if (remainingToSum.head.length == 0) // TODO RESUME HERE Y u no work???
+        sumSoFar
+      else
+        findFirstDigitsOfSumRec(sumSoFar * 10L + toSum.map(getFirstDigit).sum,
+                                digitsSoFar + 1L,
+                                toSum.map(_.tail))
+    } // DEBUG
+    println // DEBUG
+    findFirstDigitsOfSumRec(0, 0, toSum)
+    // TODO RESUME HERE Determine right number of digits to take
   }
 
   def main(args: Array[String]) =
