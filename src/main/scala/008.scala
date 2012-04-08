@@ -62,8 +62,9 @@ object _008 {
   val numDigits = 5
 
   def main(args: Array[String]) =
-    Runner.runString(args, defaultString.replaceAll("\\s", ""),
-                     getLargestProductOfDigits(_, numDigits).toString,
-                     "Solution to problem 8")
+    Runner.run[String](args, identity _, 
+                       defaultString.replaceAll("\\s", ""),
+                       getLargestProductOfDigits(_, numDigits).toString,
+                       "Solution to problem 8")
 
 }

@@ -12,6 +12,9 @@ object Runner {
    * @param args 
    *          Command-line arguments.  If these consist of a single
    *          value, then that value is passed to the given calculation.
+   * @param parser
+   *          Function for converting a string command-line argument into
+   *          the type that is expected by the code to run
    * @param defaultArg
    *          The value to pass to the given calculation if a value is
    *          not given in the <code>args</code> parameter
@@ -19,37 +22,15 @@ object Runner {
    *          The code to run
    * @param description
    *          The name to use for this code when reporting its average
-   *          running time.
+   *          running time
    */
-  def runString(args: Array[String], defaultArg: String,
-                codeToRun: String => String, description: String) = 
+  def run[T](args: Array[String], 
+             parser: String => T,
+             defaultArg: T,
+             codeToRun: T => String, 
+             description: String) = 
     if (args.length == 1)
-      printAndTime(() => codeToRun(args(0)),
-                   description)
-    else
-      printAndTime(() => codeToRun(defaultArg), description)
-
-  /**
-   * Runs the given calculation, prints the result, and computes and
-   * prints its average run time.
-   *
-   * @param args 
-   *          Command-line arguments.  If these consist of a single
-   *          value, then that value is passed to the given calculation.
-   * @param defaultArg
-   *          The value to pass to the given calculation if a value is
-   *          not given in the <code>args</code> parameter
-   * @param codeToRun
-   *          The code to run
-   * @param description
-   *          The name to use for this code when reporting its average
-   *          running time.
-   */
-  def runLong(args: Array[String], defaultArg: Long, 
-              codeToRun: Long => String, description: String) = 
-    if (args.length == 1)
-      printAndTime(() => codeToRun(java.lang.Long.parseLong(args(0))), 
-                   description)
+      printAndTime(() => codeToRun(parser(args(0))), description)
     else
       printAndTime(() => codeToRun(defaultArg), description)
 

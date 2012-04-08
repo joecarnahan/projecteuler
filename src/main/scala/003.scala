@@ -21,9 +21,9 @@ object _003 {
   val defaultComposite = 600851475143L
 
   def main(args: Array[String]) =
-    Runner.runLong(args, defaultComposite,
-                   findLargestPrimeFactor(_).toString,
-                   "Solution to problem 3")
+    Runner.run[Long](args, java.lang.Long.parseLong _, defaultComposite,
+                     findLargestPrimeFactor(_).toString,
+                     "Solution to problem 3")
 
 }
 

@@ -31,8 +31,8 @@ object _001_Efficient {
   val defaultLimit = 1000L
 
   def main(args: Array[String]) =
-    Runner.runLong(args, defaultLimit,
-                   sumOfMultiplesOf3And5LessThan(_).toString,
-                   "Efficient solution to problem 1")
+    Runner.run[Long](args, java.lang.Long.parseLong _, defaultLimit,
+                     sumOfMultiplesOf3And5LessThan(_).toString,
+                     "Efficient solution to problem 1")
 
 }

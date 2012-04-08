@@ -41,8 +41,8 @@ object _004_Naive {
   val defaultLimit = 1000
 
   def main(args: Array[String]) =
-    Runner.runLong(args, defaultLimit,
-                   findLargestPalindromeProductOfNumbersLessThan(_).toString,
-                   "Naive solution to problem 4")
+    Runner.run[Long](args, java.lang.Long.parseLong _, defaultLimit,
+                     findLargestPalindromeProductOfNumbersLessThan(_).toString,
+                     "Naive solution to problem 4")
 
 }

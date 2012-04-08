@@ -56,8 +56,8 @@ object _012_Efficient {
   val defaultLimit = 500L
 
   def main(args: Array[String]) =
-    Runner.runLong(args, defaultLimit,
-                   getTriangleNumberWithDivisors(_).toString,
-                   "Efficient solution to problem 12")
+    Runner.run[Long](args, java.lang.Long.parseLong _, defaultLimit,
+                     getTriangleNumberWithDivisors(_).toString,
+                     "Efficient solution to problem 12")
 
 }

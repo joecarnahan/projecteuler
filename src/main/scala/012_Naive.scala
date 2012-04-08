@@ -55,8 +55,8 @@ object _012_Naive {
   val defaultLimit = 500L
 
   def main(args: Array[String]) =
-    Runner.runLong(args, defaultLimit,
-                   getTriangleNumberWithDivisors(_).toString,
-                   "Naive solution to problem 12")
+    Runner.run[Long](args, java.lang.Long.parseLong _, defaultLimit,
+                     getTriangleNumberWithDivisors(_).toString,
+                     "Naive solution to problem 12")
 
 }

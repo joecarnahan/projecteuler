@@ -116,8 +116,8 @@ object _009 {
   val defaultValue = 1000L
 
   def main(args: Array[String]) =
-    Runner.runLong(args, defaultValue,
-                   getPythagoreanTripletOrError(_).product.toString,
-                   "Solution to problem 9")
+    Runner.run[Long](args, java.lang.Long.parseLong _, defaultValue,
+                     getPythagoreanTripletOrError(_).product.toString,
+                     "Solution to problem 9")
 
 }

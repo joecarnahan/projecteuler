@@ -34,8 +34,8 @@ object _010_mutable {
   val defaultLimit = 2000000L
 
   def main(args: Array[String]) =
-    Runner.runLong(args, defaultLimit,
-                   getSumOfPrimesLessThan(_).toString,
-                   "Mutable-state solution to problem 10")
+    Runner.run[Long](args, java.lang.Long.parseLong _, defaultLimit,
+                     getSumOfPrimesLessThan(_).toString,
+                     "Mutable-state solution to problem 10")
 
 }

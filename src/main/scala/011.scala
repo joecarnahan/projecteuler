@@ -6,12 +6,6 @@
 object _011 {
 
   /**
-   * Delimiter that can be used instead of a newline to indicate line
-   * breaks in the string to process.
-   */
-  val delimiter = "_"
-
-  /**
    * Parses the string as a two-dimensional array of long integers, 
    * splitting rows using either newlines or the special "delimiter"
    * and splitting columns using any whitespace within rows.
@@ -21,8 +15,7 @@ object _011 {
    * @return the given string, parsed as a 2D array of Longs
    */
   def parseString(toProcess: String): Array[Array[Long]] = {
-    val pattern = "\\n|" + delimiter
-    val stringCells = toProcess.split(pattern).map(_.split("\\s+"))
+    val stringCells = toProcess.split("\n").map(_.split("\\s+"))
     stringCells.map((a: Array[String]) => 
       a.map(_.trim).filterNot(_.isEmpty).map(java.lang.Long.parseLong(_)))
   }
@@ -134,9 +127,16 @@ object _011 {
        20 73 35 29 78 31 90 01 74 31 49 71 48 86 81 16 23 57 05 54
        01 70 54 71 83 51 54 69 16 92 33 48 61 43 52 01 89 19 67 48"""
 
+  /**
+   * Returns a function that converts underscores to newlines.  Useful when
+   * supplying arguments via the command line that need to contain newlines.
+   */
+  def convertUnderscoreToNewline: String => String = 
+    _.replaceAll("_", "\n")
+
   def main(args: Array[String]) =
-    Runner.runString(args, defaultString,
-                     findLargestProductOfFour(_, 4).toString,
-                     "Solution to problem 11")
+    Runner.run[String](args, convertUnderscoreToNewline, defaultString,
+                       findLargestProductOfFour(_, 4).toString,
+                       "Solution to problem 11")
 
 }

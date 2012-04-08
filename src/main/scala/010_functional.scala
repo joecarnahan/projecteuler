@@ -12,8 +12,8 @@ object _010_functional {
   val defaultLimit = 2000000L
 
   def main(args: Array[String]) =
-    Runner.runLong(args, defaultLimit,
-                   getSumOfPrimesLessThan(_).toString,
-                   "Functional solution to problem 10")
+    Runner.run[Long](args, java.lang.Long.parseLong _, defaultLimit,
+                     getSumOfPrimesLessThan(_).toString,
+                     "Functional solution to problem 10")
 
 }
