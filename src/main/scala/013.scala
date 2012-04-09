@@ -9,7 +9,7 @@ object _013 {
   /**
    * The default number of digits of the sum to create.
    */
-  val defaultDigits = 1L
+  val defaultDigits = 10L
 
   /**
    * The default numbers to process, stored as strings.
@@ -153,28 +153,30 @@ object _013 {
    *          the list of numbers to sum
    * @return the first <code>n</code> digits from the sum
    */
-  def findFirstDigitsOfSum(n: Long)(toSum: Traversable[String]): Long = {
+  def findFirstDigitsOfSum(n: Long)(toSum: Traversable[String]): String = {
     val length = checkLengths(toSum)
-    assert(length >= n)
     toSum.map {(s: String) => assert(s.matches("^\\d+$"))}
     def getFirstDigit: String => Long = {
       (s: String) => java.lang.Character.digit(s.charAt(0), 10)
     }
-    def findFirstDigitsOfSumRec(sumSoFar: Long, digitsSoFar: Long,
-                                remainingToSum: Traversable[String]): Long = { // DEBUG
-      println(sumSoFar + "," + digitsSoFar + "," + remainingToSum.head) // DEBUG
-      //if ((remainingToSum.head.length == 0) ||
-      //    (digitsSoFar > (n + 1)))
-      if (remainingToSum.head.length == 0) // TODO RESUME HERE Y u no work???
+    def computeFirstDigitsOfSum(sumSoFar: Long, digitsSoFar: Long,
+                                remainingToSum: Traversable[String]): Long =
+      // TODO Need to refine this to something smarter than just "x > n + 1"
+      // Carrying could go on indefinitely, but I should be able to detect as
+      // soon as carrying is no longer a concern.
+      if ((remainingToSum.head.length == 0) ||
+          (digitsSoFar > (n + 1)))
         sumSoFar
       else
-        findFirstDigitsOfSumRec(sumSoFar * 10L + toSum.map(getFirstDigit).sum,
+        computeFirstDigitsOfSum(sumSoFar * 10L + 
+                                    remainingToSum.map(getFirstDigit).sum,
                                 digitsSoFar + 1L,
-                                toSum.map(_.tail))
-    } // DEBUG
-    println // DEBUG
-    findFirstDigitsOfSumRec(0, 0, toSum)
-    // TODO RESUME HERE Determine right number of digits to take
+                                remainingToSum.map(_.tail))
+    val computedString = computeFirstDigitsOfSum(0, 0, toSum).toString
+    if (computedString.length > n)
+      computedString.substring(0,n.asInstanceOf[Int])
+    else
+      computedString
   }
 
   def main(args: Array[String]) =
