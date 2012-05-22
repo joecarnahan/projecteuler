@@ -13,47 +13,45 @@ object _014 {
 
   def isEven(toTest: Long) = ((toTest % 2) == 0)
 
+  /**
+   * Interestingly, making the "solutions" map a local variable inside the
+   * findLongestSequenceStartingUnder() method slows down the entire program
+   * by more than a factor of two.  I'd love to know why this matters,
+   * especiallly considering how much I would prefer to hide this mutable map
+   * inside the smallest possible scope.
+   */
   var solutions = scala.collection.mutable.HashMap[Long, Long]()
 
   def findLongestSequenceStartingUnder(limit: Long): Long = {
-    case class Solution(startingValue: Long, currentValue: Long, length: Long)
-    def exploreSolution(startingValue: Long): Solution = {
-      def exploreSolution(current: Solution): Solution = {
-        if (current.currentValue == 1) {
-          solutions += (current.startingValue -> current.length)
-          current
+    def exploreSolution(starting: Long): Unit = {
+      case class State(starting: Long, current: Long, length: Long)
+      def exploreSolution(state: State): Unit =
+        solutions.get(state.current) match {
+          case None => 
+            exploreSolution(State(state.starting,
+                                  if (isEven(state.current))
+                                    state.current / 2
+                                  else
+                                    state.current * 3 + 1, 
+                                  state.length + 1))
+          case Some(remainder) =>
+            solutions += (state.starting -> (state.length + remainder))
         }
-        else
-          solutions.get(current.currentValue) match {
-            case None => 
-              exploreSolution(Solution(current.startingValue,
-                                       if (isEven(current.currentValue))
-                                         current.currentValue / 2
-                                       else
-                                         current.currentValue * 3 + 1, 
-                                       current.length + 1))
-            case Some(remainder) => {
-              val totalLength = current.length + remainder
-              solutions += (current.startingValue -> totalLength)
-              Solution(current.startingValue, 1, totalLength)
-            }
-          }
-      }
-      exploreSolution(Solution(startingValue, startingValue, 1))
+      exploreSolution(State(starting, starting, 0))
     }
-    def findLongestSequenceStartingUnder(currentValue: Long, best: Solution):
-        Solution = {
-      if (currentValue >= limit)
+    def findLongestSequenceStartingUnder(current: Long, best: Long): Long = 
+      if (current >= limit)
         best
       else {
-        val current = exploreSolution(currentValue)
-        if (current.length > best.length)
-          findLongestSequenceStartingUnder(currentValue + 1, current)
-        else
-          findLongestSequenceStartingUnder(currentValue + 1, best)
+        exploreSolution(current)
+        findLongestSequenceStartingUnder(current + 1,
+                                         if (solutions(current) > solutions(best))
+                                           current
+                                         else
+                                           best)
       }
-    }
-    findLongestSequenceStartingUnder(1L, Solution(1L, 1L, 1L)).startingValue
+    solutions += (1L -> 1L)
+    findLongestSequenceStartingUnder(1L, 1L)
   }
 
   def main(args: Array[String]) =
