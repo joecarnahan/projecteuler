@@ -16,9 +16,9 @@ object _014 {
   def buildPowerMap: Map[Long, Long] = {
     def buildPowerMap(exponent: Long, map: Map[Long,Long]): Map[Long, Long] =
       if ((1L << exponent) > (Long.MaxValue / 2))
-        map + (exponent -> (1L << exponent))
+        map + ((1L << exponent) -> exponent)
       else
-        buildPowerMap(exponent + 1, map + (exponent -> (1L << exponent)))
+        buildPowerMap(exponent + 1, map + ((1L << exponent) -> exponent))
     buildPowerMap(0, Map())
   }
 
@@ -30,7 +30,6 @@ object _014 {
     case class Solution(startingValue: Long, currentValue: Long, length: Long)
     def exploreSolution(startingValue: Long): Solution = {
       def exploreSolution(current: Solution): Solution = {
-        // TODO Why doesn't this work? RESUME HERE
         powerOfTwo(current.currentValue) match {
           case None => 
             exploreSolution(Solution(current.startingValue,
