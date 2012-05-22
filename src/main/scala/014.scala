@@ -13,34 +13,31 @@ object _014 {
 
   def isEven(toTest: Long) = ((toTest % 2) == 0)
 
-  def buildPowerMap: Map[Long, Long] = {
-    def buildPowerMap(exponent: Long, map: Map[Long,Long]): Map[Long, Long] =
-      if ((1L << exponent) > (Long.MaxValue / 2))
-        map + ((1L << exponent) -> exponent)
-      else
-        buildPowerMap(exponent + 1, map + ((1L << exponent) -> exponent))
-    buildPowerMap(0, Map())
-  }
-
-  val powerMap: Map[Long, Long] = buildPowerMap
-
-  def powerOfTwo(toTest: Long): Option[Long] = powerMap.get(toTest)
+  var solutions = scala.collection.mutable.HashMap[Long, Long]()
 
   def findLongestSequenceStartingUnder(limit: Long): Long = {
     case class Solution(startingValue: Long, currentValue: Long, length: Long)
     def exploreSolution(startingValue: Long): Solution = {
       def exploreSolution(current: Solution): Solution = {
-        powerOfTwo(current.currentValue) match {
-          case None => 
-            exploreSolution(Solution(current.startingValue,
-                                     if (isEven(current.currentValue))
-                                       current.currentValue / 2
-                                     else
-                                       current.currentValue * 3 + 1, 
-                                     current.length + 1))
-          case Some(exponent) =>
-            Solution(current.startingValue, 1, current.length + exponent - 1)
+        if (current.currentValue == 1) {
+          solutions += (current.startingValue -> current.length)
+          current
         }
+        else
+          solutions.get(current.currentValue) match {
+            case None => 
+              exploreSolution(Solution(current.startingValue,
+                                       if (isEven(current.currentValue))
+                                         current.currentValue / 2
+                                       else
+                                         current.currentValue * 3 + 1, 
+                                       current.length + 1))
+            case Some(remainder) => {
+              val totalLength = current.length + remainder
+              solutions += (current.startingValue -> totalLength)
+              Solution(current.startingValue, 1, totalLength)
+            }
+          }
       }
       exploreSolution(Solution(startingValue, startingValue, 1))
     }
