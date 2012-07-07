@@ -54,6 +54,7 @@ void BST<T>::RemoveImpl(const T& toRemove, const bool removeAll) {
 template <class T>
 Tree<T>* BST<T>::Find (const T& toFind) const {
   // TODO
+  return NULL;
 }
 
 // Specializations
