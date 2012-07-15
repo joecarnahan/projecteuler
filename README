@@ -5,7 +5,5 @@ seriously, what would be the point of doing the project if not to figure the
 solutions out for yourself?
 
 *Edit:* This has become my miscellaneous bit bucket for personal programming
-homework problems.  So, you'll find that I've gone and implemented a couple
-types of trees in Scala and also started on C++ versions as well.  Eventually,
-I should organize this stuff into different projects, but for now, it can all
-live here.
+homework problems, not just Project Euler. Meanwhile, I'm now working on
+solving these problems in Go at https://github.com/joecarnahan/joego.
