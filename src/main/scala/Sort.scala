@@ -152,7 +152,7 @@ object SortTest {
    *          that a random list of the given size should be sorted, or a
    *          list of two or more integers that should be sorted
    */
-  def main(args: Array[String]) = {
+  def main(args: Array[String]): Unit = {
     val toSort =
       if (args.length == 0)
         Common.randomList(10)

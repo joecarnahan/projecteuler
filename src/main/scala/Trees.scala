@@ -678,7 +678,7 @@ object TreeTest {
    *          that a random list of the given size should be put into a tree, or
    *          a list of two or more integers that should be put into a tree
    */
-  def main(args: Array[String]) = {
+  def main(args: Array[String]): Unit = {
     val values =
       if (args.length == 0)
         Common.randomList(10)
