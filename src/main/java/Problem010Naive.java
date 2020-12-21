@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class OldSolution {
+public class Problem010Naive {
   private static ArrayList<Integer> getPrimesLessThan(int limit) {
     ArrayList<Integer> knownPrimes = new ArrayList<>();
     for (int candidate = 2; candidate < limit; candidate++) {

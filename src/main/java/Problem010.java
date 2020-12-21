@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class Solution {
+public class Problem010 {
   private static ArrayList<Integer> getPrimesLessThan(int limit) {
     ArrayList<Integer> knownPrimes = new ArrayList<>();
     boolean[] eliminatedPrimeNumbers = new boolean[(int)limit];
