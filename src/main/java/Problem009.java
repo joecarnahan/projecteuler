@@ -1,4 +1,4 @@
-public class Solution {
+public class Problem009 {
   public static void main(String[] args) {
     for (int a = 0; a < 334; a++) {
       int b = a + 1;
