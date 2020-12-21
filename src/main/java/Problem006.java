@@ -1,4 +1,4 @@
-public class Solution {
+public class Problem006 {
   public static void main(String[] args) {
     long limit = 100L;
     long sum = 0L;
