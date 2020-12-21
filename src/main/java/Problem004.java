@@ -1,4 +1,4 @@
-public class NaiveSolution {
+public class Problem004 {
   private static int palindromes = 0;
 
   private static boolean isPalindrome(int number) {
@@ -11,10 +11,13 @@ public class NaiveSolution {
     int firstFactor = 0;
     int secondFactor = 0;
     int largestProduct = 0;
-    for (int i = 1; i < 1000; i++) {
-      for (int j = 1; j < 1000; j++) {
+    for (int i = 999; i > 100; i--) {
+      for (int j = 999; j >= i; j--) {
         int product = i * j;
-        if ((product > largestProduct) && isPalindrome(product)) {
+        if (product <= largestProduct) {
+          break;
+        }
+        if (isPalindrome(product)) {
           firstFactor = i;
           secondFactor = j;
           largestProduct = product;
