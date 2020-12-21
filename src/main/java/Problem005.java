@@ -7,26 +7,6 @@ public class Problem005 {
   private static ArrayList<Integer> primesLessThanLimit;
   private static int numberOfPrimes;
 
-  private static ArrayList<Integer> getPrimesLessThan(Integer limit) {
-    ArrayList<Integer> knownPrimes = new ArrayList<>();
-    for (int candidate = 2; candidate < limit; candidate++) {
-      boolean isPrime = true;
-      for (Integer possibleDivisor : knownPrimes) {
-        if ((possibleDivisor * possibleDivisor) > candidate) {
-          break;
-        }
-        if ((candidate % possibleDivisor) == 0) {
-          isPrime = false;
-          break;
-        }
-      }
-      if (isPrime) {
-        knownPrimes.add(candidate);
-      }
-    }
-    return knownPrimes;
-  }
-
   private static ArrayList<Integer> getPrimeFactorListOf(int toFactor) {
     // System.out.print("Factored " + toFactor + " into this list: ");
     ArrayList<Integer> primeFactorList = new ArrayList<>();
@@ -60,7 +40,7 @@ public class Problem005 {
   }
 
   public static void main(String[] args) {
-    primesLessThanLimit = getPrimesLessThan(limit);
+    primesLessThanLimit = Primes.getPrimesLessThan(limit);
     numberOfPrimes = primesLessThanLimit.size();
     // System.out.println("Got these " + numberOfPrimes + " primes: " + primesLessThanLimit);
     ArrayList<Integer> peakPrimeFactorCounts = new ArrayList<>(numberOfPrimes);
