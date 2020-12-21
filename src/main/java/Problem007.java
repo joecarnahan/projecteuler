@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class Solution {
+public class Problem007 {
   public static void main(String[] args) {
     int primesSought = 10001;
     ArrayList<Long> knownPrimes = new ArrayList<>();
