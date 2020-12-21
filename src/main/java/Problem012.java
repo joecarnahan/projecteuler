@@ -1,8 +1,7 @@
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 
-public class Solution {
-  private static final long limit = 500L;  // Change to 500L
+public class Problem012 {
+  private static final long limit = 500L;
 
   private static HashSet<Long> getAllFactorsOf(Long toFactor) {
     HashSet<Long> result = new HashSet<>();
@@ -27,16 +26,5 @@ public class Solution {
       nextTriangleNumberFactors = getAllFactorsOf(nextTriangleNumber);
     } while (nextTriangleNumberFactors.size() <= limit);
     System.out.println(nextTriangleNumber);
-  }
-
-  private static class TriangleGenerator {
-    private long currentTriangleNumber = 0L;
-    private long nextNaturalNumber = 1L;
-
-    private long getNextTriangleNumber() {
-      currentTriangleNumber += nextNaturalNumber;
-      nextNaturalNumber++;
-      return currentTriangleNumber;
-    }
   }
 }
