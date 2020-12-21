@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class Solution {
+public class Problem005 {
 
   private static final int limit = 20;
   private static ArrayList<Integer> primesLessThanLimit;

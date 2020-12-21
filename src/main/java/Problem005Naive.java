@@ -1,4 +1,4 @@
-public class NaiveSolution {
+public class Problem005Naive {
   public static void main(String[] args) {
     int result = 0;
     for (int candidate = 20; result == 0; candidate++) {
