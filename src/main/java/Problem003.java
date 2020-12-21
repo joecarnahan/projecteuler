@@ -1,7 +1,7 @@
 import java.util.LinkedHashSet;
 import java.util.ArrayList;
 
-public class Solution {
+public class Problem003 {
   public static void main(String[] args) {
     long toFactor = 600851475143L; // Values to try: 4 6 9 16 30 13195 600851475143 
     LinkedHashSet<Long> primeFactorSet = new LinkedHashSet<>();
