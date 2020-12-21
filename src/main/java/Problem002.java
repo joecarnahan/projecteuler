@@ -1,4 +1,4 @@
-public class Solution {
+public class Problem002 {
   public static void main(String[] args) {
     int sum = 0;
     int previous = 0;
